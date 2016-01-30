@@ -12,9 +12,6 @@ namespace gn36\versionchecknotifier\notification;
 
 class base extends \phpbb\notification\type\base
 {
-	/** @var \gn36\versionchecknotifier\helper\version_checker */
-	protected $version_checker;
-
 	protected $language_key = 'VERSIONCHECKNOTIFIER_NOTIFY_BASE';
 	protected $language_key_sec = 'VERSIONCHECKNOTIFIER_NOTIFY_BASE_SEC';
 
@@ -39,10 +36,9 @@ class base extends \phpbb\notification\type\base
 	 * @param string $user_notifications_table
 	 * @return \phpbb\notification\type\base
 	 */
-	public function __construct(\phpbb\user_loader $user_loader, \phpbb\db\driver\driver_interface $db, \phpbb\cache\driver\driver_interface $cache, $user, \phpbb\auth\auth $auth, \phpbb\config\config $config, \gn36\versionchecknotifier\helper\version_checker $version_checker, $phpbb_root_path, $php_ext, $notification_types_table, $notifications_table, $user_notifications_table)
+	public function __construct(\phpbb\user_loader $user_loader, \phpbb\db\driver\driver_interface $db, \phpbb\cache\driver\driver_interface $cache, $user, \phpbb\auth\auth $auth, \phpbb\config\config $config, $phpbb_root_path, $php_ext, $notification_types_table, $notifications_table, $user_notifications_table)
 	{
 		parent::__construct($user_loader, $db, $cache, $user, $auth, $config, $phpbb_root_path, $php_ext, $notification_types_table, $notifications_table, $user_notifications_table);
-		$this->version_checker = $version_checker;
 	}
 
 	public function get_type()
@@ -112,7 +108,15 @@ class base extends \phpbb\notification\type\base
 
 	public function get_url()
 	{
-		// TODO: Generate a useful link (e.g. to admin panel?)
+		if ($url = $this->get_data('announcement_url'))
+		{
+			return $url;
+		}
+		if ($url = $this->get_data('download_url'))
+		{
+			return $url;
+		}
+		// Not useful, but at least a valid link
 		return append_sid("{$this->phpbb_root_path}index.{$this->php_ext}");
 	}
 
@@ -162,6 +166,11 @@ class base extends \phpbb\notification\type\base
 			$this->set_data('version', 0);
 		}
 
+		if (isset($notification_data['old_version']))
+		{
+			$this->set_data('old_version', $notification_data['old_version']);
+		}
+
 		if (isset($notification_data['text']))
 		{
 			$this->set_data('text', $notification_data['text']);
@@ -171,9 +180,15 @@ class base extends \phpbb\notification\type\base
 		{
 			$this->set_data('security', $notification_data['security']);
 		}
-		else
+
+		if (isset($notification_data['download_url']))
 		{
-			$this->set_data('security', false);
+			$this->set_data('download_url', $notification_data['download_url']);
+		}
+
+		if (isset($notification_data['announcement_url']))
+		{
+			$this->set_data('announcement_url', $notification_data['announcement_url']);
 		}
 
 		return parent::create_insert_array($notification_data, $pre_create_data);

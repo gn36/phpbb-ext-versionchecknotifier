@@ -4,8 +4,9 @@ services:
         class: gn36\versionchecknotifier\helper\version_checker
         arguments:
             - '@ext.manager'
-            - '@version_helper'
-            - '@user'
+            - '@service_container'
+            - '@template'
+            - '@config'
     # Events --------------------------------------
     gn36.versionchecknotifier.events.global_events:
         class: gn36\versionchecknotifier\event\global_events
@@ -22,6 +23,7 @@ services:
             - '@config'
             - '@dbal.conn'
             - '@log'
+            - '@notification_manager'
             - '@gn36.versionchecknotifier.helper.version_checker'
         calls:
             - [set_name, [gn36.versionchecknotifier.cron.check]]
@@ -38,7 +40,6 @@ services:
             - '@user'
             - '@auth'
             - '@config'
-            - '@gn36.versionchecknotifier.helper.version_checker'
             - '%core.root_path%'
             - '%core.php_ext%'
             - '%tables.notification_types%'
@@ -56,7 +57,6 @@ services:
             - '@user'
             - '@auth'
             - '@config'
-            - '@gn36.versionchecknotifier.helper.version_checker'
             - '%core.root_path%'
             - '%core.php_ext%'
             - '%tables.notification_types%'
@@ -74,7 +74,6 @@ services:
             - '@user'
             - '@auth'
             - '@config'
-            - '@gn36.versionchecknotifier.helper.version_checker'
             - '%core.root_path%'
             - '%core.php_ext%'
             - '%tables.notification_types%'

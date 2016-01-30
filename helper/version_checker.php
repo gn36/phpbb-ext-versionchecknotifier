@@ -9,7 +9,6 @@
 
 namespace gn36\versionchecknotifier\helper;
 
-
 class version_checker
 {
 	/** @var \phpbb\extension\manager */
@@ -18,17 +17,78 @@ class version_checker
 	/** @var \phpbb\extension\metadata_manager */
 	protected $md_manager = null;
 
+	/** @var \Symfony\Component\DependencyInjection\ContainerInterface */
+	protected $container;
+
 	/** @var \phpbb\version_helper */
 	protected $version_helper;
 
-	/** @var \phpbb\user */
-	protected $user;
+	/** @var \phpbb\config\config */
+	protected $config;
 
-	public function __construct(\phpbb\extension\manager $manager, \phpbb\version_helper $version_helper, \phpbb\user $user)
+	/** @var \phpbb\template\template */
+	protected $template;
+
+	/**
+	 * Constructor
+	 *
+	 * @param \phpbb\extension\manager $manager
+	 * @param \phpbb\version_helper $version_helper
+	 * @param \phpbb\template\template $template
+	 * @param \phpbb\config\config $config
+	 */
+	public function __construct(\phpbb\extension\manager $manager, \Symfony\Component\DependencyInjection\ContainerInterface $container, \phpbb\template\template $template, \phpbb\config\config $config)
 	{
 		$this->manager = $manager;
-		$this->version_helper = $version_helper;
-		$this->user = $user;
+		$this->container = $container;
+		$this->config = $config;
+		$this->template = $template;
+	}
+
+	/**
+	 * Check versions for all extensions and return the ones that need an update
+	 *
+	 * @param bool $check_disabled
+	 * @param bool $check_purged
+	 * @param bool $force_update
+	 * @return array extension names => version info(new, current)
+	 */
+	public function check_ext_versions($check_disabled = true, $check_purged = true, $force_update = false)
+	{
+		if ($check_disabled && $check_purged)
+		{
+			$extensions = $this->manager->all_available();
+		}
+		else if ($check_disabled)
+		{
+			$extensions = $this->manager->all_configured();
+		}
+		else if ($check_purged)
+		{
+			$extensions = array_diff($this->manager->all_available(), $this->manager->all_disabled());
+		}
+		else
+		{
+			$extensions = $this->manager->all_enabled();
+		}
+
+		$version_info = array();
+		foreach (array_keys($extensions) as $extname)
+		{
+			$md_manager = $this->manager->create_extension_metadata_manager($extname, $this->template);
+
+			// We only need an update if the version check returns potential updates
+			if ($new_versions = $this->version_check($md_manager, $force_update))
+			{
+				$curr_version = $md_manager->get_metadata('version');
+
+				$version_info[$extname] = array(
+					'new' 		=> $new_versions,
+					'current' 	=> $curr_version,
+				);
+			}
+		}
+		return $version_info;
 	}
 
 	/**
@@ -40,22 +100,26 @@ class version_checker
 	 * @return string
 	 * @throws RuntimeException
 	 */
-	public function version_check(\phpbb\extension\metadata_manager $md_manager, $force_update = false, $force_cache = false)
+	protected function version_check(\phpbb\extension\metadata_manager $md_manager, $force_update = false, $force_cache = false)
 	{
 		$meta = $md_manager->get_metadata('all');
 
 		if (!isset($meta['extra']['version-check']))
 		{
-			throw new \RuntimeException($this->user->lang('NO_VERSIONCHECK'), 1);
+			//throw new \RuntimeException($this->user->lang('NO_VERSIONCHECK'), 1);
+			// this is for cron, we want to ignore these cases
+			// Return value is different from empty array still
+			return false;
 		}
 
 		$version_check = $meta['extra']['version-check'];
 
-		$version_helper = $this->version_helper;
+		// Stupid scopes prevent this from being injected:
+		$version_helper = $this->container->get('version_helper');
 		$version_helper->set_current_version($meta['version']);
 		$version_helper->set_file_location($version_check['host'], $version_check['directory'], $version_check['filename']);
 		$version_helper->force_stability($this->config['extension_force_unstable'] ? 'unstable' : null);
 
-		return $updates = $version_helper->get_suggested_updates($force_update, $force_cache);
+		return $version_helper->get_suggested_updates($force_update, $force_cache);
 	}
 }

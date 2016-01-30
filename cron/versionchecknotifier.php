@@ -25,24 +25,28 @@ class versionchecknotifier extends \phpbb\cron\task\base
 	/** @var \phpbb\log\log_interface */
 	protected $log;
 
+	/** @var \phpbb\notification\manager */
+	protected $notification_manager;
+
 	/** @var \gn36\versionchecknotifier\helper\version_checker */
 	protected $version_checker;
 
 	/** @var int */
 	protected $run_interval;
 
-	public function __construct(\phpbb\cache\service $cache, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\log\log_interface $log, \gn36\versionchecknotifier\helper\version_checker $version_checker)
+	public function __construct(\phpbb\cache\service $cache, \phpbb\config\config $config, \phpbb\db\driver\driver_interface $db, \phpbb\log\log_interface $log, \phpbb\notification\manager $notification_manager, \gn36\versionchecknotifier\helper\version_checker $version_checker)
 	{
 		$this->cache = $cache;
 		$this->config = $config;
 		$this->db = $db;
 		$this->log = $log;
 		$this->version_checker = $version_checker;
+		$this->notification_manager = $notification_manager;
 		$this->run_interval = $config['versionchecknotifier_gc'];
 	}
 
 	/**
-	 * Run this cronjob (and delete prunable tasks)
+	 * Run this cronjob
 	 * @see \phpbb\cron\task\task::run()
 	 */
 	public function run()
@@ -50,6 +54,17 @@ class versionchecknotifier extends \phpbb\cron\task\base
 		$now = time();
 
 		//TODO
+		$available_updates = $this->version_checker->check_ext_versions();
+
+		foreach ($available_updates as $extname => $data)
+		{
+			$notify_data = array(
+				'name' => $extname,
+				'version' => $data['new'],
+				'old_version' => $data['current'],
+			);
+			$this->notification_manager->add_notifications('gn36.versionchecknotifier.notification.type.ext_update', $notify_data);
+		}
 
 		$this->config->set('versionchecknotifier_last_gc', $now, true);
 	}
