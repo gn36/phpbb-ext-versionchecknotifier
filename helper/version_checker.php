@@ -75,17 +75,24 @@ class version_checker
 		$version_info = array();
 		foreach (array_keys($extensions) as $extname)
 		{
-			$md_manager = $this->manager->create_extension_metadata_manager($extname, $this->template);
-
-			// We only need an update if the version check returns potential updates
-			if ($new_versions = $this->version_check($md_manager, $force_update))
+			try
 			{
-				$curr_version = $md_manager->get_metadata('version');
+				$md_manager = $this->manager->create_extension_metadata_manager($extname, $this->template);
 
-				$version_info[$extname] = array(
-					'new' 		=> $new_versions,
-					'current' 	=> $curr_version,
-				);
+				// We only need an update if the version check returns potential updates
+				if ($new_versions = $this->version_check($md_manager, $force_update))
+				{
+					$curr_version = $md_manager->get_metadata('version');
+
+					$version_info[$extname] = array(
+						'new' 		=> $new_versions,
+						'current' 	=> $curr_version,
+					);
+				}
+			}
+			catch (\Exception $e)
+			{
+				continue;
 			}
 		}
 		return $version_info;

@@ -10,25 +10,25 @@
 
 namespace gn36\versionchecknotifier\notification;
 
-class ext_update extends base
+class phpbb_update extends base
 {
 	// Overwrite base in some cases:
-	protected $language_key = 'VERSIONCHECKNOTIFIER_NOTIFY_EXT_UPDATE';
-	protected $language_key_sec = 'VERSIONCHECKNOTIFIER_NOTIFY_EXT_UPDATE_SEC';
-	protected $permission = 'a_extensions';
+	protected $language_key = 'VERSIONCHECKNOTIFIER_NOTIFY_PHPBB_UPDATE';
+	protected $language_key_sec = 'VERSIONCHECKNOTIFIER_NOTIFY_PHPBB_UPDATE_SEC';
+	protected $permission = 'a_board';
 
 	public static $notification_option = array(
-		'lang' 	=> 'VERSIONCHECKNOTIFY_NOTIFY_OPTION_EXT',
+		'lang' 	=> 'VERSIONCHECKNOTIFY_NOTIFY_OPTION_PHPBB',
 		'group'	=> 'NOTIFICATION_GROUP_MISCELLANEOUS',
 	);
 
 	public function get_type()
 	{
-		return 'gn36.versionchecknotifier.notification.type.ext_update';
+		return 'gn36.versionchecknotifier.notification.type.phpbb_update';
 	}
 
 	public function get_email_template()
 	{
-		return '@gn36_versionchecknotifier/mail_ext_update';
+		return '@gn36_versionchecknotifier/mail_phpbb_update';
 	}
 }

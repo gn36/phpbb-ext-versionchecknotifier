@@ -26,7 +26,7 @@ services:
             - '@notification_manager'
             - '@gn36.versionchecknotifier.helper.version_checker'
         calls:
-            - [set_name, [gn36.versionchecknotifier.cron.check]]
+            - [set_name, [gn36.versionchecknotifier.cron.versionchecknotifier]]
         tags:
             - { name: cron.task }
     # Notifications --------------------------------------

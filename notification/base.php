@@ -15,6 +15,9 @@ class base extends \phpbb\notification\type\base
 	protected $language_key = 'VERSIONCHECKNOTIFIER_NOTIFY_BASE';
 	protected $language_key_sec = 'VERSIONCHECKNOTIFIER_NOTIFY_BASE_SEC';
 
+	// The permission to check to find users / send message
+	protected $permission = 'a_this_is_a_nonexistent_permission';
+
 	public static $notification_option = array(
 		'lang' 	=> 'VERSIONCHECKNOTIFY_NOTIFY_OPTION',
 		'group'	=> 'NOTIFICATION_GROUP_MISCELLANEOUS',
@@ -48,21 +51,21 @@ class base extends \phpbb\notification\type\base
 
 	public function is_available()
 	{
-		return false;
+		return $this->auth->acl_get($this->permission);
 	}
 
 	public static function get_item_id($notification_data)
 	{
 		// String -> unique numeric id is never really pleasant
 		$id = gmp_init(substr(md5($notification_data['ext_name'] . $notification_data['version']), 0, 16), 16);
-		return gmp_intval(gmp_div_r($id, gmp_init(1e8-1)));
+		return gmp_intval(gmp_div_r($id, gmp_init(100000000-1)));
 	}
 
 	public static function get_item_parent_id($notification_data)
 	{
 		// Parent of an extension version is the extension itself:
 		$id = gmp_init(substr(md5($notification_data['ext_name']), 0, 16), 16);
-		return gmp_intval(gmp_div_r($id, gmp_init(1e8-1)));
+		return gmp_intval(gmp_div_r($id, gmp_init(100000000-1)));
 	}
 
 	public function find_users_for_notification($notification_data, $options = array())
@@ -71,9 +74,9 @@ class base extends \phpbb\notification\type\base
 			'ignore_users' => array(),
 		), $options);
 
-		//TODO: Find the administrators to inform
-
-		$users = array_keys($administrators);
+		//TODO: This may fail if this administrator permission is denied using "never"!
+		$users = $this->auth->acl_get_list(false, $this->permission);
+		$users = (!empty($users[0][$this->permission])? $users[0][$this->permission] : array());
 
 		if (empty($users))
 		{
