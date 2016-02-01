@@ -3,12 +3,11 @@ This extension will check for new versions of all extensions (including this one
 
 Current features:
 
-* None functional as of yet
+* Check the version of all extensions and notify administrators of any updates
 
 Planned features:
 
 * Check the version of phpBB and notify administrators of any updates
-* Check the version of all extensions and notify administrators of any updates
 
 ## Installation
 
