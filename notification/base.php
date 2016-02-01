@@ -169,7 +169,7 @@ class base extends \phpbb\notification\type\base
 		{
 			$old_ver = $notification_data['old_version']['version'];
 		}
-		else if(isset($notification_data['old_version']))
+		else if (isset($notification_data['old_version']))
 		{
 			$old_ver = $notification_data['old_version'];
 		}

@@ -12,7 +12,7 @@ namespace gn36\versionchecknotifier\event;
 
 class global_events implements \Symfony\Component\EventDispatcher\EventSubscriberInterface
 {
-static public function getSubscribedEvents()
+	static public function getSubscribedEvents()
 	{
 		return array(
 			'core.user_setup'		=> 'load_global_lang',
@@ -62,6 +62,12 @@ static public function getSubscribedEvents()
 
 	public function load_global_lang($event)
 	{
-		$this->user->add_lang_ext('gn36/versionchecknotifier', 'global');
+		//$this->user->add_lang_ext('gn36/versionchecknotifier', 'global');
+		$lang_ary = $event['lang_set_ext'];
+		$lang_ary[] = array(
+			'ext_name' 	=> 'gn36/versionchecknotifier',
+			'lang_set'	=> 'global',
+		);
+		$event['lang_set_ext'] = $lang_ary;
 	}
 }
