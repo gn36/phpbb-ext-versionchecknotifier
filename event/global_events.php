@@ -12,15 +12,56 @@ namespace gn36\versionchecknotifier\event;
 
 class global_events implements \Symfony\Component\EventDispatcher\EventSubscriberInterface
 {
-	static public function getSubscribedEvents()
+static public function getSubscribedEvents()
 	{
 		return array(
-			'core.permissions'			=> 'add_permissions',
+			'core.user_setup'		=> 'load_global_lang',
+			'core.user_add_after'	=> 'notification_add',
 		);
 	}
 
-	public function add_permissions($event)
+	/** @var \phpbb\user */
+	protected $user;
+
+	/** @var \phpbb\notification\manager */
+	protected $notification_manager;
+
+	/** @var \phpbb\config\config */
+	protected $config;
+
+	public function __construct(\phpbb\user $user, \phpbb\notification\manager $notification_manager, \phpbb\config\config $config)
 	{
-		// TODO
+		$this->user = $user;
+		$this->notification_manager = $notification_manager;
+		$this->config = $config;
+	}
+
+	public function notification_add($event)
+	{
+		if (!$this->config['email_enable'])
+		{
+			return;
+		}
+
+		$notifications_data = array(
+			array(
+				'item_type'	=> 'gn36.versionchecknotify.notification.type.ext_update',
+				'method'	=> 'notification.method.email',
+			),
+			array(
+				'item_type'	=> 'gn36.versionchecknotify.notification.type.phpbb_update',
+				'method'	=> 'notification.method.email',
+			),
+		);
+
+		foreach ($notifications_data as $subscription)
+		{
+			$this->notification_manager->add_subscription($subscription['item_type'], 0, $subscription['method'], $event['user_id']);
+		}
+	}
+
+	public function load_global_lang($event)
+	{
+		$this->user->add_lang_ext('gn36/versionchecknotifier', 'global');
 	}
 }

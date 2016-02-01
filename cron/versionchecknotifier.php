@@ -56,6 +56,7 @@ class versionchecknotifier extends \phpbb\cron\task\base
 		//TODO
 		$available_updates = $this->version_checker->check_ext_versions();
 
+		$x = 0;
 		foreach ($available_updates as $extname => $data)
 		{
 			$notify_data = array(
@@ -63,7 +64,8 @@ class versionchecknotifier extends \phpbb\cron\task\base
 				'version' => $data['new'],
 				'old_version' => $data['current'],
 			);
-			$this->notification_manager->add_notifications('gn36.versionchecknotifier.notification.type.ext_update', $notify_data);
+
+			print_r($this->notification_manager->add_notifications('gn36.versionchecknotifier.notification.type.ext_update', $notify_data));
 		}
 
 		$this->config->set('versionchecknotifier_last_gc', $now, true);

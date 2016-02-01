@@ -37,14 +37,14 @@ class base extends \phpbb\notification\type\base
 	{
 		// String -> unique numeric id is never really pleasant
 		$id = gmp_init(substr(md5($notification_data['ext_name'] . $notification_data['version']), 0, 16), 16);
-		return gmp_intval(gmp_div_r($id, gmp_init(100000000-1)));
+		return gmp_intval(gmp_div_r($id, gmp_init(10000000-1)));
 	}
 
 	public static function get_item_parent_id($notification_data)
 	{
 		// Parent of an extension version is the extension itself:
 		$id = gmp_init(substr(md5($notification_data['ext_name']), 0, 16), 16);
-		return gmp_intval(gmp_div_r($id, gmp_init(100000000-1)));
+		return gmp_intval(gmp_div_r($id, gmp_init(10000000-1)));
 	}
 
 	public function find_users_for_notification($notification_data, $options = array())
@@ -56,6 +56,15 @@ class base extends \phpbb\notification\type\base
 		//TODO: This may fail if this administrator permission is denied using "never"!
 		$users = $this->auth->acl_get_list(false, $this->permission);
 		$users = (!empty($users[0][$this->permission])? $users[0][$this->permission] : array());
+
+		// Additionally, we want all founders, because apparently they are not in the list automatically:
+		$sql = 'SELECT user_id FROM ' . USERS_TABLE . ' WHERE user_type = ' . USER_FOUNDER;
+		$result = $this->db->sql_query($sql, 172790);
+		$founders = $this->db->sql_fetchrowset($result);
+		foreach ($founders as $user_ary)
+		{
+			$users[] = $user_ary['user_id'];
+		}
 
 		if (empty($users))
 		{
@@ -71,16 +80,35 @@ class base extends \phpbb\notification\type\base
 	{
 		//return $this->user_loader->get_avatar($this->get_data('user_id'));
 		//TODO: This may not work if we are somewhere in a virtual subfolder (-> Mod Rewrite or similar)
-		return "<img class='avatar' alt='update available' src='{$this->phpbb_root_path}ext/gn36/versionchecknotifier/fixtures/notify_icon.png' />";
+		if ($this->get_data('security'))
+		{
+			return "<img class='avatar' alt='{$this->user->lang('UPDATE_AVAILABLE')}' src='{$this->phpbb_root_path}ext/gn36/versionchecknotifier/fixtures/notify_icon_sec.png' />";
+		}
+		return "<img class='avatar' alt='{$this->user->lang('UPDATE_AVAILABLE')}' src='{$this->phpbb_root_path}ext/gn36/versionchecknotifier/fixtures/notify_icon.png' />";
 	}
 
 	public function get_title()
 	{
 		$ext_name = $this->get_data('name');
-		$version  = $this->get_data('new_version');
+		$version  = $this->get_data('version');
 		$security = $this->get_data('security');
 
 		return $this->user->lang($security ? $this->language_key_sec : $this->language_key, $ext_name, $version);
+	}
+
+	public function get_reason()
+	{
+		$ext_name = $this->get_data('name');
+		$version  = $this->get_data('version');
+		$old_version = $this->get_data('old_version');
+		$dl = $this->get_data('download_url');
+
+		if ($dl)
+		{
+			return $this->user->lang('REASON_UPDATE_DL', $ext_name, $version, $old_version, $dl);
+		}
+
+		return $this->user->lang('REASON_UPDATE', $ext_name, $version, $old_version);
 	}
 
 	function users_to_query()
@@ -99,7 +127,7 @@ class base extends \phpbb\notification\type\base
 			return $url;
 		}
 		// Not useful, but at least a valid link
-		return append_sid("{$this->phpbb_root_path}index.{$this->php_ext}");
+		return append_sid("{$this->phpbb_root_path}ucp.{$this->php_ext}", array('i' => 'ucp_notifications', 'mode' => 'notification_list'));
 	}
 
 	public function get_redirect_url()
@@ -117,14 +145,76 @@ class base extends \phpbb\notification\type\base
 
 	public function get_email_template_variables()
 	{
+		$this->user->add_lang_ext('gn36/versionchecknotifier', 'mailing');
 		// TODO: EMAIL_SIG
 		return array(
-			'EXTENSION' => $this->get_data('name'),
-			'VERSION'	=> $this->get_data('version'),
-			'SITENAME' => $this->config['sitename'],
-			'U_INDEX' => generate_board_url() . "/index.{$this->php_ext}",
+			'EXTENSION' 	=> $this->get_data('name'),
+			'NAME' 			=> $this->get_data('name'),
+			'VERSION'		=> $this->get_data('version') ? $this->get_data('version') : $this->user->lang('NOT_AVAILABLE'),
+			'OLD_VERSION' 	=> $this->get_data('old_version') ? $this->get_data('old_version') : $this->user->lang('NOT_AVAILABLE'),
+			'SITENAME' 		=> $this->config['sitename'],
+			'SECURITY'		=> $this->get_data('security') ? $this->user->lang('IS_SECURITY_UPDATE') : '',
+			'U_INDEX' 		=> generate_board_url() . "/index.{$this->php_ext}",
+			'DOWNLOAD'		=> $this->get_data('download_url') ? $this->get_data('download_url') : $this->user->lang('NOT_AVAILABLE'),
+			'ANNOUNCEMENT' 	=> $this->get_data('announcement_url') ? $this->get_data('announcement_url') : $this->user->lang('NOT_AVAILABLE'),
+			'ADD_INFO'		=> $this->get_data('text') ? $this->user->lang('ADDITIONAL_INFO', $this->get_data('text')) : '',
 			//TODO: How to actually personalize this?
 		);
+	}
+
+	protected function extract_version_info($notification_data)
+	{
+		// Lets start with "old version", that is a bit easier:
+		if (isset($notification_data['old_version']) && is_array($notification_data['old_version']))
+		{
+			$old_ver = $notification_data['old_version']['version'];
+		}
+		else if(isset($notification_data['old_version']))
+		{
+			$old_ver = $notification_data['old_version'];
+		}
+		else
+		{
+			$old_ver = null;
+		}
+		$notification_data['old_version'] = $old_ver;
+
+		// New version:
+		if (isset($notification_data['version']) && is_array($notification_data['version']))
+		{
+			$elem = $notification_data['version'];
+			foreach ($elem as $data)
+			{
+				// Skip all Versions that are too large
+				if (phpbb_version_compare($old_ver, $data['current'], '>='))
+				{
+					continue;
+				}
+
+				if (isset($data['current']))
+				{
+					$notification_data['version'] = $data['current'];
+				}
+				if (isset($data['eol']) && (!isset($notification_data['eol']) || null === $notification_data['eol']))
+				{
+					$notification_data['eol'] = $data['eol'];
+				}
+				if (isset($data['security']) && (!isset($notification_data['security']) || null === $notification_data['security']))
+				{
+					$notification_data['security'] = $data['security'];
+				}
+				if (isset($data['announcement']) && (!isset($notification_data['announcement_url']) || !$notification_data['announcement_url']))
+				{
+					$notification_data['announcement_url'] = $data['announcement'];
+				}
+				if (isset($data['download']) && (!isset($notification_data['download_url']) || !$notification_data['download_url']))
+				{
+					$notification_data['download_url'] = $data['download'];
+				}
+			}
+		}
+
+		return $notification_data;
 	}
 
 	public function create_insert_array($notification_data, $pre_create_data = array())
@@ -138,6 +228,9 @@ class base extends \phpbb\notification\type\base
 		{
 			$this->set_data('name', 'phpbb');
 		}
+
+		// Extract version info if necessary:
+		$notification_data = $this->extract_version_info($notification_data);
 
 		if (isset($notification_data['version']))
 		{
@@ -158,6 +251,11 @@ class base extends \phpbb\notification\type\base
 			$this->set_data('text', $notification_data['text']);
 		}
 
+		if (isset($notification_data['eol']))
+		{
+			$this->set_data('eol', $notification_data['eol']);
+		}
+
 		if (isset($notification_data['security']))
 		{
 			$this->set_data('security', $notification_data['security']);
@@ -172,6 +270,7 @@ class base extends \phpbb\notification\type\base
 		{
 			$this->set_data('announcement_url', $notification_data['announcement_url']);
 		}
+		print_r($notification_data);
 
 		return parent::create_insert_array($notification_data, $pre_create_data);
 	}
@@ -183,6 +282,8 @@ class base extends \phpbb\notification\type\base
 	 */
 	public function update_notifications($notification_data)
 	{
+		$notification_data = $this->extract_version_info($notification_data);
+
 		$old_notifications = array();
 		$sql = 'SELECT n.user_id
 			FROM ' . $this->notifications_table . ' n, ' . $this->notification_types_table . ' nt

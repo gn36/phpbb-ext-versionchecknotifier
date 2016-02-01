@@ -1,0 +1,12 @@
+Subject: “{SITENAME}“ — Extension update available
+
+Hello,
+For the extension „{EXTENSION}“ the new version {VERSION} is available. Currently, version {OLD_VERSION} is installed in the board.
+{SECURITY}
+{ADD_INFO}
+Announcement: {ANNOUNCEMENT}
+Download of the extension: {DOWNLOAD}
+
+Go to the board:
+{U_INDEX}
+{EMAIL_SIG}

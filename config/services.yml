@@ -13,6 +13,7 @@ services:
         arguments:
             - '@user'
             - '@notification_manager'
+            - '@config'
         tags:
             - { name: event.listener }
     # Cron --------------------------------------

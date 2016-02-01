@@ -1,0 +1,11 @@
+Subject: „{SITENAME}“ — Erweiterungsupdate verfügbar
+
+Hallo,
+Für die Erweiterung „{EXTENSION}“ ist die Version {VERSION} verfügbar. Im Board ist derzeit {OLD_VERSION} installiert.
+{SECURITY}
+{ADD_INFO}
+Ankündigung: {ANNOUNCEMENT}
+Download der Erweiterung: {DOWNLOAD}
+
+Zum Board: {U_INDEX}
+{EMAIL_SIG}

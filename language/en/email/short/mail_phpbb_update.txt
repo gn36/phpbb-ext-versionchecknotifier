@@ -1,0 +1,12 @@
+Subject: “{SITENAME}“ — phpBB Update available
+
+Hello,
+For phpBB, a new version {VERSION} is available. Currently, the board runs on version {OLD_VERSION}.
+{SECURITY}
+{ADD_INFO}
+Announcement at phpBB.com: {ANNOUNCEMENT}
+Download from phpBB.com: {DOWNLOAD}
+
+Go to the board:
+{U_INDEX}
+{EMAIL_SIG}

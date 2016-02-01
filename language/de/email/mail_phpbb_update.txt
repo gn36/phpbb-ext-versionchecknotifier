@@ -1,0 +1,17 @@
+Subject: „{SITENAME}“ — phpBB Update verfügbar
+
+Hallo,
+
+Für phpBB ist die neue Version {VERSION} verfügbar. Das Board läuft derzeit mit {OLD_VERSION}.
+
+{SECURITY}
+
+{ADD_INFO}
+
+Ankündigung auf phpBB.com: {ANNOUNCEMENT}
+Download auf phpBB.com: {DOWNLOAD}
+
+Zum Board:
+{U_INDEX}
+
+{EMAIL_SIG}
