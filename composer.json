@@ -27,7 +27,7 @@
 		"version-check" : {
 			"host" : "phpbb.gn36.de",
 			"directory" : "/extensions/vinfo",
-			"filename" : "phpbb-ext-hookup.json"
+			"filename" : "phpbb-ext-versionchecknotifier.json"
 		}
 	},
 	"support" : {
