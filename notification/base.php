@@ -23,27 +23,6 @@ class base extends \phpbb\notification\type\base
 		'group'	=> 'NOTIFICATION_GROUP_MISCELLANEOUS',
 	);
 
-	/**
-	 * Notification Type Base Constructor
-	 *
-	 * @param \phpbb\user_loader $user_loader
-	 * @param \phpbb\db\driver\driver_interface $db
-	 * @param \phpbb\cache\driver\driver_interface $cache
-	 * @param \phpbb\user $user
-	 * @param \phpbb\auth\auth $auth
-	 * @param \phpbb\config\config $config
-	 * @param string $phpbb_root_path
-	 * @param string $php_ext
-	 * @param string $notification_types_table
-	 * @param string $notifications_table
-	 * @param string $user_notifications_table
-	 * @return \phpbb\notification\type\base
-	 */
-	public function __construct(\phpbb\user_loader $user_loader, \phpbb\db\driver\driver_interface $db, \phpbb\cache\driver\driver_interface $cache, $user, \phpbb\auth\auth $auth, \phpbb\config\config $config, $phpbb_root_path, $php_ext, $notification_types_table, $notifications_table, $user_notifications_table)
-	{
-		parent::__construct($user_loader, $db, $cache, $user, $auth, $config, $phpbb_root_path, $php_ext, $notification_types_table, $notifications_table, $user_notifications_table);
-	}
-
 	public function get_type()
 	{
 		return 'gn36.versionchecknotifier.notification.type.base';

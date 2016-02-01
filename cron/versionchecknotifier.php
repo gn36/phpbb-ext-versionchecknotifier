@@ -56,7 +56,6 @@ class versionchecknotifier extends \phpbb\cron\task\base
 		//TODO
 		$available_updates = $this->version_checker->check_ext_versions();
 
-
 		foreach ($available_updates as $extname => $data)
 		{
 			$notify_data = array(
