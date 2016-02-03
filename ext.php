@@ -17,7 +17,7 @@ class ext extends \phpbb\extension\base
 	 * @var array
 	 */
 	protected $notification_types = array(
-		'gn36.versionchecknotifier.notification.type.base',
+		//'gn36.versionchecknotifier.notification.type.base',
 		'gn36.versionchecknotifier.notification.type.ext_update',
 		'gn36.versionchecknotifier.notification.type.phpbb_update',
 	);
