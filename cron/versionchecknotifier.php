@@ -53,19 +53,41 @@ class versionchecknotifier extends \phpbb\cron\task\base
 	{
 		$now = time();
 
-		//TODO
+		// Extensions
 		$available_updates = $this->version_checker->check_ext_versions();
 
-		$x = 0;
-		foreach ($available_updates as $extname => $data)
-		{
-			$notify_data = array(
-				'name' => $extname,
-				'version' => $data['new'],
-				'old_version' => $data['current'],
-			);
+		// phpBB
+		$phpbb_update = $this->version_checker->check_phpbb_version();
 
-			print_r($this->notification_manager->add_notifications('gn36.versionchecknotifier.notification.type.ext_update', $notify_data));
+		if (is_array($available_updates) && is_array($phpbb_update))
+		{
+			$available_updates = array_merge($available_updates, $phpbb_update);
+		}
+		else if (is_array($phpbb_update))
+		{
+			//TODO: Store errors, this shouldn't happen, even with no updates there should be an array
+			$available_updates = $phpbb_update;
+		}
+		else
+		{
+			// phpBB Version check failed
+			//TODO: Store errors and if they happen too often in a row, create a new notification.
+		}
+
+		if (is_array($available_updates))
+		{
+			foreach ($available_updates as $extname => $data)
+			{
+				$notify_data = array(
+					'name' => $extname,
+					'version' => $data['new'],
+					'old_version' => $data['current'],
+				);
+
+				$notification_type = $extname === 'phpbb' ? 'phpbb_update' : 'ext_update';
+
+				$this->notification_manager->add_notifications('gn36.versionchecknotifier.notification.type.' . $notification_type, $notify_data);
+			}
 		}
 
 		$this->config->set('versionchecknotifier_last_gc', $now, true);

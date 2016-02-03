@@ -14,6 +14,7 @@ class base extends \phpbb\notification\type\base
 {
 	protected $language_key = 'VERSIONCHECKNOTIFIER_NOTIFY_BASE';
 	protected $language_key_sec = 'VERSIONCHECKNOTIFIER_NOTIFY_BASE_SEC';
+	protected $notify_icon = 'notify_icon';
 
 	// The permission to check to find users / send message
 	protected $permission = 'a_this_is_a_nonexistent_permission';
@@ -78,13 +79,14 @@ class base extends \phpbb\notification\type\base
 
 	public function get_avatar()
 	{
-		//return $this->user_loader->get_avatar($this->get_data('user_id'));
 		//TODO: This may not work if we are somewhere in a virtual subfolder (-> Mod Rewrite or similar)
+		$board_url = generate_board_url() . '/';
+
 		if ($this->get_data('security'))
 		{
-			return "<img class='avatar' alt='{$this->user->lang('UPDATE_AVAILABLE')}' src='{$this->phpbb_root_path}ext/gn36/versionchecknotifier/fixtures/notify_icon_sec.png' />";
+			return "<img class='avatar' alt='{$this->user->lang('UPDATE_AVAILABLE')}' src='$board_url{$this->phpbb_root_path}ext/gn36/versionchecknotifier/fixtures/{$this->notify_icon}_sec.png' />";
 		}
-		return "<img class='avatar' alt='{$this->user->lang('UPDATE_AVAILABLE')}' src='{$this->phpbb_root_path}ext/gn36/versionchecknotifier/fixtures/notify_icon.png' />";
+		return "<img class='avatar' alt='{$this->user->lang('UPDATE_AVAILABLE')}' src='$board_url{$this->phpbb_root_path}ext/gn36/versionchecknotifier/fixtures/{$this->notify_icon}.png' />";
 	}
 
 	public function get_title()
@@ -132,6 +134,7 @@ class base extends \phpbb\notification\type\base
 
 	public function get_redirect_url()
 	{
+		//TODO: We have to manually redirect, because redirecting to an external site is not allowed by default...
 		return $this->get_url();
 	}
 
@@ -188,6 +191,7 @@ class base extends \phpbb\notification\type\base
 				// Skip all Versions that are too large
 				if (phpbb_version_compare($old_ver, $data['current'], '>='))
 				{
+					echo "Skipping: " . $old_ver . ' vs. ' . $data['current'] . " \n";
 					continue;
 				}
 
@@ -270,7 +274,6 @@ class base extends \phpbb\notification\type\base
 		{
 			$this->set_data('announcement_url', $notification_data['announcement_url']);
 		}
-		print_r($notification_data);
 
 		return parent::create_insert_array($notification_data, $pre_create_data);
 	}

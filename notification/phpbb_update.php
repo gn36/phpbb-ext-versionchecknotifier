@@ -15,6 +15,7 @@ class phpbb_update extends base
 	// Overwrite base in some cases:
 	protected $language_key = 'VERSIONCHECKNOTIFIER_NOTIFY_PHPBB_UPDATE';
 	protected $language_key_sec = 'VERSIONCHECKNOTIFIER_NOTIFY_PHPBB_UPDATE_SEC';
+	protected $notify_icon = 'notify_phpbb';
 	protected $permission = 'a_board';
 
 	public static $notification_option = array(

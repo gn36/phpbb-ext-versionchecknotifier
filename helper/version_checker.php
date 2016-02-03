@@ -20,9 +20,6 @@ class version_checker
 	/** @var \Symfony\Component\DependencyInjection\ContainerInterface */
 	protected $container;
 
-	/** @var \phpbb\version_helper */
-	protected $version_helper;
-
 	/** @var \phpbb\config\config */
 	protected $config;
 
@@ -43,6 +40,36 @@ class version_checker
 		$this->container = $container;
 		$this->config = $config;
 		$this->template = $template;
+	}
+
+	public function check_phpbb_version($force_update = false)
+	{
+		// Check phpBB Version:
+		try
+		{
+			/** @var $version_helper \phpbb\version_helper */
+			$version_helper = $this->container->get('version_helper');
+			$new_versions 	= $version_helper->get_suggested_updates($force_update);
+		}
+		catch(\RuntimeException $e)
+		{
+			// Version check failed.
+			// TODO: Maybe we should store the last successful check date somewhere
+			// and notify the admin after a couple of unsuccessful tries?
+			return false;
+		}
+
+		if (!$new_versions)
+		{
+			// No update necessary
+			return array();
+		}
+
+		// Return the same format as for extensions:
+		return array('phpbb' => array(
+			'new' 		=> $new_versions,
+			'current' 	=> $this->config['version'],
+		));
 	}
 
 	/**
@@ -92,6 +119,7 @@ class version_checker
 			}
 			catch (\Exception $e)
 			{
+				// TODO: Should we store this information, if there is version check info available?
 				continue;
 			}
 		}
@@ -122,6 +150,7 @@ class version_checker
 		$version_check = $meta['extra']['version-check'];
 
 		// Stupid scopes prevent this from being injected:
+		/** @var $version_helper \phpbb\version_helper */
 		$version_helper = $this->container->get('version_helper');
 		$version_helper->set_current_version($meta['version']);
 		$version_helper->set_file_location($version_check['host'], $version_check['directory'], $version_check['filename']);
