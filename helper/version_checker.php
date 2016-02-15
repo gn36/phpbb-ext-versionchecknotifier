@@ -51,7 +51,7 @@ class version_checker
 			$version_helper = $this->container->get('version_helper');
 			$new_versions 	= $version_helper->get_suggested_updates($force_update);
 		}
-		catch(\RuntimeException $e)
+		catch (\RuntimeException $e)
 		{
 			// Version check failed.
 			// TODO: Maybe we should store the last successful check date somewhere
