@@ -23,12 +23,17 @@
 	"extra" : {
 		"display-name" : "gn36 - Version Check Notifier",
 		"soft-require" : {
-			"phpbb/phpbb" : ">=3.1.2,<3.2.*@dev"
+			"phpbb/phpbb" : ">=3.1.2,<3.2@dev"
 		},
 		"version-check" : {
 			"host" : "phpbb.gn36.de",
 			"directory" : "/extensions/vinfo",
 			"filename" : "phpbb-ext-versionchecknotifier.json"
+		}
+	},
+	"autoload" : {
+		"psr-4" : {
+			"gn36\\versionchecknotifier\\" : ""
 		}
 	},
 	"support" : {
