@@ -8,7 +8,6 @@
  */
 namespace gn36\versionchecknotifier\tests\helper;
 
-
 class version_checker_test extends \phpbb_test_case
 {
 	static protected function setup_extensions()

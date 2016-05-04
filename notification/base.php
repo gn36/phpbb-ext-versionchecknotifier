@@ -152,7 +152,13 @@ class base extends \phpbb\notification\type\base
 
 	public function get_redirect_url()
 	{
-		//TODO: We have to manually redirect, because redirecting to an external site is not allowed by default...
+		$nid = $this->notification_id;
+
+		if ($nid !== null)
+		{
+			return append_sid("{$this->phpbb_root_path}app.{$this->php_ext}/versionchecknotifier/redirect/$nid");
+		}
+		// Revert back to the default and hope for the best if this doesn't work...
 		return $this->get_url();
 	}
 

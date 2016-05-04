@@ -7,6 +7,13 @@ services:
             - '@service_container'
             - '@template'
             - '@config'
+    # Controller ----------------------------------
+    gn36.versionchecknotifier.controller.redirector:
+        class: gn36\versionchecknotifier\controller\redirector
+        arguments:
+            - '@user'
+            - '@notification_manager'
+    
     # Events --------------------------------------
     gn36.versionchecknotifier.events.global_events:
         class: gn36\versionchecknotifier\event\global_events

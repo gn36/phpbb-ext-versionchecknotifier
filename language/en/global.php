@@ -36,4 +36,6 @@ $lang = array_merge($lang, array(
 	'REASON_UPDATE_DL'	=> 'New version: %2$s, currently installed: %3$s. <a href="%4$s">Download new version</a>',
 
 	'UPDATE_AVAILABLE' => 'Update available',
+
+	'INVALID_NOTIFICATION_ID_REDIRECT' => 'The notification was not found, the redirect is not possible.'
 ));
