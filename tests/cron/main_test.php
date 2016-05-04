@@ -9,7 +9,7 @@
  */
 namespace gn36\versionchecknotifier\tests\cron;
 
-class gn36_hookup_main_test extends \phpbb_database_test_case
+class main_test extends \phpbb_database_test_case
 {
 	static protected function setup_extensions()
 	{
