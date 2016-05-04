@@ -4,10 +4,9 @@ This extension will check for new versions of all extensions (including this one
 Current features:
 
 * Check the version of all extensions and notify administrators of any updates
-
-Planned features:
-
 * Check the version of phpBB and notify administrators of any updates
+
+This extension is currently not compatible to phpBB 3.2.
 
 ## Installation
 
