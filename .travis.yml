@@ -49,7 +49,8 @@ branches:
     - /^dev\/.*$/
 
 install:
-  - composer install --dev --no-interaction --prefer-source
+# Hopefully we don't need any travis dependencies for the test in 5.3.3
+  - sh -c "if [ '$TRAVIS_PHP_VERSION' != '5.3.3' ]; then composer install --dev --no-interaction --prefer-source; fi"
   - chmod +x travis/prepare-phpbb.sh
   - travis/prepare-phpbb.sh $EXTNAME $PHPBB_BRANCH
   - travis/prepare-langtest.sh $EXTNAME $PHPBB_BRANCH

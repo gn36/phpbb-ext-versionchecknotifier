@@ -16,7 +16,7 @@ cd ../langtest ;
 
 for i in $(ls language/)
 do 
-	php vendor/bin/PhpbbTranslationValidator.php validate --language-dir=language $i
+	php ../phpBB3/vendor/bin/PhpbbTranslationValidator.php validate --language-dir=language $i
 	if [ ! $? -eq 0 ]; then
 		retval=false
 	fi
