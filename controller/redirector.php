@@ -23,11 +23,11 @@ class redirector
 		{
 			trigger_error('INVALID_NOTIFICATION_ID_REDIRECT');
 		}
-echo $notify_id;
+
 		$notifications = $this->manager->load_notifications(array('notification_id' => intval($notify_id)));
 
 		if (!isset($notifications['notifications'][$notify_id]))
-		{print_r($notifications);
+		{
 			trigger_error('INVALID_NOTIFICATION_ID_REDIRECT');
 		}
 
