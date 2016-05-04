@@ -1,8 +1,8 @@
-Subject: “{SITENAME}“ — Atualização de extensão disponível
+Subject: “{SITENAME}“ — Atualização de extensão “{EXTENSION}“ disponível
 
 Olá,
 
-A nova versão {VERSION} da extensão „{EXTENSION}“ está dsponível. Atualmente está instalada a versão {OLD_VERSION}.
+A nova versão {VERSION} da extensão “{EXTENSION}“ está dsponível. Atualmente está instalada a versão {OLD_VERSION}.
 
 {SECURITY}
 

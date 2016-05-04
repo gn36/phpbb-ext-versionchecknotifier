@@ -1,4 +1,4 @@
-Subject: „{SITENAME}“ — Erweiterungsupdate verfügbar
+Subject: „{SITENAME}“ — Erweiterungsupdate für „{EXTENSION}“ verfügbar
 
 Hallo,
 

@@ -1,8 +1,8 @@
-Subject: “{SITENAME}“ — Extension update available
+Subject: “{SITENAME}“ — Extension update available for “{EXTENSION}“
 
 Hello,
 
-For the extension „{EXTENSION}“ the new version {VERSION} is available. Currently, version {OLD_VERSION} is installed in the board.
+For the extension “{EXTENSION}“ the new version {VERSION} is available. Currently, version {OLD_VERSION} is installed in the board.
 
 {SECURITY}
 
