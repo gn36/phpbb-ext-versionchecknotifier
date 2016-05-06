@@ -215,7 +215,7 @@ class base extends \phpbb\notification\type\base
 				// Skip all Versions that are too large
 				if (phpbb_version_compare($old_ver, $data['current'], '>='))
 				{
-					echo "Skipping: " . $old_ver . ' vs. ' . $data['current'] . " \n";
+					#echo "Skipping: " . $old_ver . ' vs. ' . $data['current'] . " \n";
 					continue;
 				}
 

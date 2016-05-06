@@ -1,5 +1,11 @@
 <?php
-
+/**
+ *
+ * @package gn36/versionchecknotifier
+ * @copyright (c) 2016 Martin Beckmann
+ * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
+ *
+ */
 namespace gn36\versionchecknotifier\controller;
 
 class redirector
