@@ -102,9 +102,9 @@ class base extends \phpbb\notification\type\base
 
 		if ($this->get_data('security'))
 		{
-			return "<img class='avatar' alt='{$this->user->lang('UPDATE_AVAILABLE')}' src='$board_url{$this->phpbb_root_path}ext/gn36/versionchecknotifier/fixtures/{$this->notify_icon}_sec.png' />";
+			return "<img class='avatar' alt='{$this->user->lang('UPDATE_AVAILABLE')}' src='${board_url}ext/gn36/versionchecknotifier/fixtures/{$this->notify_icon}_sec.png' />";
 		}
-		return "<img class='avatar' alt='{$this->user->lang('UPDATE_AVAILABLE')}' src='$board_url{$this->phpbb_root_path}ext/gn36/versionchecknotifier/fixtures/{$this->notify_icon}.png' />";
+		return "<img class='avatar' alt='{$this->user->lang('UPDATE_AVAILABLE')}' src='${board_url}ext/gn36/versionchecknotifier/fixtures/{$this->notify_icon}.png' />";
 	}
 
 	public function get_title()
