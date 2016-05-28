@@ -19,7 +19,7 @@ class redirector_test extends \phpbb_functional_test_case
 		return array('gn36/versionchecknotifier');
 	}
 
-	public function test_call_redirect()
+	public function test_call_redirect_errors()
 	{
 		$each_closure = function($node, $i)
 		{
@@ -35,6 +35,18 @@ class redirector_test extends \phpbb_functional_test_case
 
 		$crawler = self::request('GET', 'app.php/versionchecknotifier/redirect/1?sid=' . $this->sid);
 		$this->assertContains($this->lang('INVALID_NOTIFICATION_ID_REDIRECT'), implode(' ', $crawler->filter('p')->each($each_closure)));
+	}
+
+	public function test_call_redirect_working()
+	{
+		$each_closure = function($node, $i)
+		{
+			return $node->text();
+		};
+
+		$this->login();
+
+		$this->add_lang_ext('gn36/versionchecknotifier', 'global');
 
 		// Put a notification into the db:
 		// TODO: If tested with a dev version of phpBB 3.1, it should find the dev version of phpBB 3.2 as update :)
@@ -81,12 +93,19 @@ class redirector_test extends \phpbb_functional_test_case
 		$crawler = self::request('GET', 'app.php/versionchecknotifier/redirect/' . $last_id . '?sid=' . $this->sid);
 		$this->assertNotContains($this->lang('INVALID_NOTIFICATION_ID_REDIRECT'), implode(' ', $crawler->filter('p')->each($each_closure)));
 		$this->assertContains('example post', implode(' ', $crawler->filter('.content')->each($each_closure)));
+	}
 
-		// Check for login window
-		$this->logout();
-		$crawler = self::request('GET', 'app.php/versionchecknotifier/redirect/' . $last_id . '?sid=' . $this->sid);
+	public function test_redirect_login()
+	{
+		$each_closure = function($node, $i)
+		{
+			return $node->text();
+		};
+
+		$this->add_lang_ext('gn36/versionchecknotifier', 'global');
+
+		$crawler = self::request('GET', 'app.php/versionchecknotifier/redirect/1?sid=' . $this->sid);
 		$this->assertNotContains($this->lang('INVALID_NOTIFICATION_ID_REDIRECT'), implode(' ', $crawler->filter('p')->each($each_closure)));
 		$this->assertContains($this->lang('LOGIN'), implode(' ', $crawler->filter('.content')->each($each_closure)));
-
 	}
 }
