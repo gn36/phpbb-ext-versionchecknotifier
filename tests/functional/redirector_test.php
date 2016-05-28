@@ -7,7 +7,7 @@
  *
  */
 
-namespace gn36\hookup\tests\functional;
+namespace gn36\versionchecknotifier\tests\functional;
 
 /**
  * @group functional
@@ -30,13 +30,14 @@ class redirector_test extends \phpbb_functional_test_case
 
 		$this->add_lang_ext('gn36/versionchecknotifier', 'global');
 
-		$crawler = self::request('GET', 'app.php/versionchecknotifier/redirect/0');
+		$crawler = self::request('GET', 'app.php/versionchecknotifier/redirect/0?sid=' . $this->sid);
 		$this->assertContains($this->lang('INVALID_NOTIFICATION_ID_REDIRECT'), implode(' ', $crawler->filter('p')->each($each_closure)));
 
-		$crawler = self::request('GET', 'app.php/versionchecknotifier/redirect/1');
+		$crawler = self::request('GET', 'app.php/versionchecknotifier/redirect/1?sid=' . $this->sid);
 		$this->assertContains($this->lang('INVALID_NOTIFICATION_ID_REDIRECT'), implode(' ', $crawler->filter('p')->each($each_closure)));
 
 		// Put a notification into the db:
+		// TODO: If tested with a dev version of phpBB 3.1, it should find the dev version of phpBB 3.2 as update :)
 		$sql = 'SELECT user_id FROM ' . USERS_TABLE . ' WHERE username = \'admin\'';
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
@@ -77,8 +78,15 @@ class redirector_test extends \phpbb_functional_test_case
 		$this->assertGreaterThan(0, $last_id);
 
 		// Now check redirect
-		$crawler = self::request('GET', 'app.php/versionchecknotifier/redirect/' . $last_id);
+		$crawler = self::request('GET', 'app.php/versionchecknotifier/redirect/' . $last_id . '?sid=' . $this->sid);
 		$this->assertNotContains($this->lang('INVALID_NOTIFICATION_ID_REDIRECT'), implode(' ', $crawler->filter('p')->each($each_closure)));
 		$this->assertContains('example post', implode(' ', $crawler->filter('.content')->each($each_closure)));
+
+		// Check for login window
+		$this->logout();
+		$crawler = self::request('GET', 'app.php/versionchecknotifier/redirect/' . $last_id . '?sid=' . $this->sid);
+		$this->assertNotContains($this->lang('INVALID_NOTIFICATION_ID_REDIRECT'), implode(' ', $crawler->filter('p')->each($each_closure)));
+		$this->assertContains($this->lang('LOGIN'), implode(' ', $crawler->filter('.content')->each($each_closure)));
+
 	}
 }

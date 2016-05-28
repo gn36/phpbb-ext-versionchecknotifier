@@ -30,6 +30,11 @@ class redirector
 			trigger_error('INVALID_NOTIFICATION_ID_REDIRECT');
 		}
 
+		if (!$this->user->data['is_registered'])
+		{
+			login_box();
+		}
+
 		$notifications = $this->manager->load_notifications(array('notification_id' => intval($notify_id)));
 
 		if (!isset($notifications['notifications'][$notify_id]))
