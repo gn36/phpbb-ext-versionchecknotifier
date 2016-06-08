@@ -182,8 +182,8 @@ class base extends \phpbb\notification\type\base
 			'SITENAME' 		=> $this->config['sitename'],
 			'SECURITY'		=> $this->get_data('security') ? $this->user->lang('IS_SECURITY_UPDATE') : '',
 			'U_INDEX' 		=> generate_board_url() . "/index.{$this->php_ext}",
-			'DOWNLOAD'		=> $this->get_data('download_url') ? $this->get_data('download_url') : $this->user->lang('NOT_AVAILABLE'),
-			'ANNOUNCEMENT' 	=> $this->get_data('announcement_url') ? $this->get_data('announcement_url') : $this->user->lang('NOT_AVAILABLE'),
+			'DOWNLOAD'		=> $this->get_data('download_url') ? str_replace('&amp;', '&', $this->get_data('download_url')) : $this->user->lang('NOT_AVAILABLE'),
+			'ANNOUNCEMENT' 	=> $this->get_data('announcement_url') ? str_replace('&amp;', '&', $this->get_data('announcement_url')) : $this->user->lang('NOT_AVAILABLE'),
 			'ADD_INFO'		=> $this->get_data('text') ? $this->user->lang('ADDITIONAL_INFO', $this->get_data('text')) : '',
 			//TODO: How to actually personalize this?
 		);
