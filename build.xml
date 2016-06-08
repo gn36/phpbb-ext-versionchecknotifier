@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="gn36/hookup" default="rebuild-archive">
+<project name="gn36/versionchecknotifier" default="rebuild-archive">
 	<property name="buildfolder" value="./build/" />
 	<property name="extvendor" value="gn36" />
 	<property name="extname" value="versionchecknotifier" />
