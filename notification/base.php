@@ -52,8 +52,6 @@ class base extends \phpbb\notification\type\base
 	public static function get_item_id($notification_data)
 	{
 		// String -> unique numeric id is never really pleasant
-		//$id = gmp_init(substr(md5($notification_data['ext_name'] . $notification_data['version']), 0, 16), 16);
-		//return gmp_intval(gmp_div_r($id, gmp_init(10000000-1)));
 		$id = substr(md5($notification_data['ext_name'] . $notification_data['version']), 0, 16);
 		return intval(bcmod(self::bchex2dec($id), 10000000-1));
 
