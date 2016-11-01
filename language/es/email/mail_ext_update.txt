@@ -1,0 +1,17 @@
+Subject: “{SITENAME}“ — Actualización disponible para extensión “{EXTENSION}“
+
+Hola,
+
+Para la extensión “{EXTENSION}“ la nueva versión {VERSION} está disponible. Actualmente, la versión {OLD_VERSION} está instalada en el foro.
+
+{SECURITY}
+
+{ADD_INFO}
+
+Anuncio: {ANNOUNCEMENT}
+Descargar de la extensión: {DOWNLOAD}
+
+Ir al foro:
+{U_INDEX}
+
+{EMAIL_SIG}
