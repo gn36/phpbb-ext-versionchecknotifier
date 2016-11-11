@@ -52,6 +52,7 @@ class base extends \phpbb\notification\type\base
 	public static function get_item_id($notification_data)
 	{
 		// String -> unique numeric id is never really pleasant
+		//TODO: BCMOD replacement wieder einbauen
 		$id = substr(md5($notification_data['ext_name'] . $notification_data['version']), 0, 16);
 		return intval(bcmod(self::bchex2dec($id), 10000000-1));
 
@@ -297,7 +298,7 @@ class base extends \phpbb\notification\type\base
 			$this->set_data('announcement_url', $notification_data['announcement_url']);
 		}
 
-		return parent::create_insert_array($notification_data, $pre_create_data);
+		parent::create_insert_array($notification_data, $pre_create_data);
 	}
 
 	/**

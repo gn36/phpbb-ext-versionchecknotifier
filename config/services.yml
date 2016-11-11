@@ -42,16 +42,12 @@ services:
         class: gn36\versionchecknotifier\notification\ext_update
         scope: prototype
         arguments:
-            - '@user_loader'
             - '@dbal.conn'
-            - '@cache.driver'
+            - '@language'
             - '@user'
             - '@auth'
-            - '@config'
             - '%core.root_path%'
             - '%core.php_ext%'
-            - '%tables.notification_types%'
-            - '%tables.notifications%'
             - '%tables.user_notifications%'
         tags:
             - { name: notification.type }
@@ -59,16 +55,12 @@ services:
         class: gn36\versionchecknotifier\notification\phpbb_update
         scope: prototype
         arguments:
-            - '@user_loader'
             - '@dbal.conn'
-            - '@cache.driver'
+            - '@language'
             - '@user'
             - '@auth'
-            - '@config'
             - '%core.root_path%'
             - '%core.php_ext%'
-            - '%tables.notification_types%'
-            - '%tables.notifications%'
             - '%tables.user_notifications%'
         tags:
             - { name: notification.type }
