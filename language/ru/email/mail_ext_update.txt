@@ -1,0 +1,17 @@
+Subject: “{SITENAME}“ — Доступно обновление расширения “{EXTENSION}“
+
+Здравствуйте.
+
+Для расширения “{EXTENSION}“ доступна новая версия {VERSION}. На данный момент установлена версия {OLD_VERSION}.
+
+{SECURITY}
+
+{ADD_INFO}
+
+Объявление: {ANNOUNCEMENT}
+Загрузка расширения: {DOWNLOAD}
+
+Перейти на форум:
+{U_INDEX}
+
+{EMAIL_SIG}
