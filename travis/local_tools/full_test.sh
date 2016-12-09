@@ -2,14 +2,14 @@
 
 # Environment:
 #EXTNAME="phpbbde/pastebin"  # CHANGE name of the extension HERE
-EXTNAME="gn36/hookup"  # CHANGE name of the extension HERE
+EXTNAME="gn36/versionchecknotifier"  # CHANGE name of the extension HERE
 #EXTBRANCH="dev/translation-validator"		# Branch to test
 EXTBRANCH="dev/tests"		# Branch to test
 SNIFF="1"            # Should we run code sniffer on your code?
 IMAGE_ICC="1"        # Should we run icc profile sniffer on your images?
 EPV="1"              # Should we run EPV (Extension Pre Validator) on your code?
 LANG_TEST="0"
-PHPBB_BRANCH="3.1.x"
+PHPBB_BRANCH="3.2.x"
 
 DB=mysqli
 TRAVIS_PHP_VERSION=5.5.9

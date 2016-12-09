@@ -9,7 +9,7 @@
 # 
 
 # Environment:
-export EXTNAME="gn36/hookup" # Name of extension
+export EXTNAME="gn36/versionchecknotifier" # Name of extension
 
 # Copy the current version of the ext for testing:
 EXTDIR=${EXTNAME%/*}

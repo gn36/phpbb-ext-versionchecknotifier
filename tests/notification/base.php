@@ -40,12 +40,14 @@ abstract class base extends \phpbb_database_test_case
 		$config = $this->config = new \phpbb\config\config(array(
 			//TODO
 		));
-		$lang = $this->lang = new \phpbb\language\language();
-		$user = $this->user = new \phpbb\user($lang);
+		$lang = $this->lang = $this->getMockBuilder('\phpbb\language\language')
+			->disableOriginalConstructor()
+			->getMock();
+		$user = $this->user = new \phpbb\user($lang, '\phpbb\datetime');
 		$this->user_loader = new \phpbb\user_loader($this->db, $phpbb_root_path, $phpEx, 'phpbb_users');
 		$auth = $this->auth = new \phpbb_mock_notifications_auth();
 		$cache = $this->cache = new \phpbb\cache\service(
-			new \phpbb\cache\driver\null(),
+			new \phpbb\cache\driver\dummy(),
 			$this->config,
 			$this->db,
 			$phpbb_root_path,
@@ -61,15 +63,12 @@ abstract class base extends \phpbb_database_test_case
 			array(),
 			$this->container,
 			$this->user_loader,
-			$this->config,
 			$this->phpbb_dispatcher,
 			$this->db,
 			$this->cache,
+			$this->lang,
 			$this->user,
-			$phpbb_root_path,
-			$phpEx,
 			'phpbb_notification_types',
-			'phpbb_notifications',
 			'phpbb_user_notifications'
 		);
 
@@ -98,6 +97,6 @@ abstract class base extends \phpbb_database_test_case
 	{
 		global $phpbb_root_path, $phpEx;
 
-		return new $type($this->user_loader, $this->db, $this->cache->get_driver(), $this->user, $this->auth, $this->config, $phpbb_root_path, $phpEx, 'phpbb_notification_types', 'phpbb_notifications', 'phpbb_user_notifications');
+		return new $type($this->db, $this->lang, $this->user, $this->auth, $this->config, $phpbb_root_path, $phpEx, 'phpbb_notification_types', 'phpbb_notifications', 'phpbb_user_notifications');
 	}
 }
