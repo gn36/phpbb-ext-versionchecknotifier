@@ -40,7 +40,8 @@ abstract class base extends \phpbb_database_test_case
 		$config = $this->config = new \phpbb\config\config(array(
 			//TODO
 		));
-		$user = $this->user = new \phpbb\user('\phpbb\datetime');
+		$lang = $this->lang = new \phpbb\language\language();
+		$user = $this->user = new \phpbb\user($lang);
 		$this->user_loader = new \phpbb\user_loader($this->db, $phpbb_root_path, $phpEx, 'phpbb_users');
 		$auth = $this->auth = new \phpbb_mock_notifications_auth();
 		$cache = $this->cache = new \phpbb\cache\service(
