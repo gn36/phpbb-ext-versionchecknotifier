@@ -1,0 +1,17 @@
+Subject: “{SITENAME}“ — Доступно обновление phpBB
+
+Здравствуйте.
+
+Для phpBB доступна новая версия {VERSION}. В настоящее время установлена версия {OLD_VERSION}.
+
+{SECURITY}
+
+{ADD_INFO}
+
+Объявление в phpBB.com: {ANNOUNCEMENT}
+Скачать с phpBB.com: {DOWNLOAD}
+
+Перейти на форум:
+{U_INDEX}
+
+{EMAIL_SIG}
