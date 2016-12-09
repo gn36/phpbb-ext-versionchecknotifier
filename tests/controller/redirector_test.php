@@ -62,7 +62,10 @@ class redirector_test extends \phpbb_test_case
 
 	private function get_instance($get_url_count = 0, $registered = true)
 	{
-		$user = $this->getMock('\phpbb\user', array(), array('\phpbb\datetime'));
+		$user = $this->getMockBuilder('\phpbb\user')
+			->disableOriginalConstructor()
+			->getMock();
+		//$user = $this->getMock('\phpbb\user', array(), array('\phpbb\datetime'));
 		$user->ip = '';
 		$user->data = array(
 			'user_id'		=> 2,
