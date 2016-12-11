@@ -49,7 +49,14 @@ class redirector_test extends \phpbb_test_case
 		}
 
 		// This should redirect:
-		$inst->handle(12345);
+		try
+		{
+			$inst->handle(12345);
+		}
+		catch (\Exception $msg)
+		{
+			$this->fail("Redirect failed incorrectly on 12345: " . $msg->getMessage());
+		}
 
 		// Check the values
 		$data = \gn36\versionchecknotifier\controller\redirect("", false, false, $this);
@@ -92,11 +99,12 @@ class redirector_test extends \phpbb_test_case
 			->method('get_url')
 			->will($this->returnValue('urldummy'));
 
+		// For some reasons, the return values of the manager don't work any longer.
 		$manager->expects($this->any())
 			->method('load_notifications')
 			->will($this->returnValueMap(array(
 				array(array('notification_id' => 12345), array('notifications' => array(12345 => $notification))),
-				array($this->anything(), array('notifications' => array()))
+				array($this->anything(), array('notifications' => array("ERROR")))
 			)));
 		return new \gn36\versionchecknotifier\controller\redirector($user, $manager);
 	}
