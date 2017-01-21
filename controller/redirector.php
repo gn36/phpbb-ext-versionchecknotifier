@@ -35,7 +35,8 @@ class redirector
 			login_box();
 		}
 
-		$notifications = $this->manager->load_notifications(array('notification_id' => intval($notify_id)));
+		//$notifications = $this->manager->load_notifications(array('notification_id' => intval($notify_id)));
+		$notifications = $this->manager->load_notifications('notification.method.board', array('notification_id' => intval($notify_id)));
 
 		if (!isset($notifications['notifications'][$notify_id]))
 		{
@@ -49,3 +50,4 @@ class redirector
 		redirect($url, false, true);
 	}
 }
+
