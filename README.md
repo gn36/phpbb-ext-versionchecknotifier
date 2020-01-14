@@ -1,4 +1,4 @@
-# phpBB 3.1 Extension - Version Check Notifier
+# phpBB 3.2/3.3 Extension - Version Check Notifier
 This extension will check for new versions of all extensions (including this one) and phpBB periodically and notifies the administrators about any available updates found. This uses the regular phpBB version check mechanism, so no configuration is needed.
 
 Current features:
@@ -6,7 +6,6 @@ Current features:
 * Check the version of all extensions and notify administrators of any updates
 * Check the version of phpBB and notify administrators of any updates
 
-This extension is currently not compatible to phpBB 3.2.
 
 ## Installation
 
