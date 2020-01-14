@@ -40,7 +40,7 @@ services:
     # Notifications --------------------------------------
     gn36.versionchecknotifier.notification.type.ext_update:
         class: gn36\versionchecknotifier\notification\ext_update
-        scope: prototype
+        shared: false
         arguments:
             - '@dbal.conn'
             - '@language'
@@ -53,7 +53,7 @@ services:
             - { name: notification.type }
     gn36.versionchecknotifier.notification.type.phpbb_update:
         class: gn36\versionchecknotifier\notification\phpbb_update
-        scope: prototype
+        shared: false
         arguments:
             - '@dbal.conn'
             - '@language'
