@@ -165,7 +165,7 @@ class main_test extends \phpbb_database_test_case
 		{
 			call_user_func_array(array($call, 'withConsecutive'), $expected_notification_data);
 		}
-		else
+		else if ($expected_notification_data !== null)
 		{
 			$call->withConsecutive($expected_notification_data);
 		}
