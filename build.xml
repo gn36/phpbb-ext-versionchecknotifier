@@ -7,10 +7,11 @@
 
 	<!-- AUTO CONFIG from here on -->
 	<property name="dir" value="${buildfolder}data/${extvendor}/${extname}/" />
+	<property name="zipbase" value="${buildfolder}data/" />
 	<property name="zipfolder" value="${buildfolder}zip/" />
 	
 	<exec dir="${project.basedir}"
-			command='php -r "\$j = json_decode(file_get_contents(\"composer.json\")); echo \$j->version;"'
+			command='php -r "$j = json_decode(file_get_contents(\"composer.json\")); echo $j->version;"'
 			checkreturn="true"
 			outputProperty='version' />
 	
@@ -34,6 +35,7 @@
 		<exclude name="travis/**" />
 		<exclude name=".git/**" />
 		<exclude name="build/**" />
+		<exclude name="vendor/**" />
 	</fileset>
 
 	<!-- ============================================== -->
@@ -58,7 +60,7 @@
 		
 		<!-- Install composer dependencies, if there are any. -->
 		<exec dir="${dir}"
-			command='php -r "\$j = json_decode(file_get_contents(\"composer.json\"), true); if (isset(\$j[\"require\"][\"php\"])) {unset(\$j[\"require\"][\"php\"]);} echo (count(\$j[\"require\"]));"'
+			command='php -r "$j = json_decode(file_get_contents(\"composer.json\"), true); if (isset($j[\"require\"][\"php\"])) {unset($j[\"require\"][\"php\"]);} echo (count($j[\"require\"]));"'
 			checkreturn="true"
 			outputProperty='composer-has-dependencies' />
 		<if>
@@ -98,7 +100,7 @@
 	
 	<!-- ======= ARCHIVE ========== -->
 	<target name="archive" depends="build">
-		<zip destfile="${zipfolder}/${extvendor}-${extname}-${version}.zip" includeemptydirs="true" basedir="${dir}" />
+		<zip destfile="${zipfolder}/${extvendor}-${extname}-${version}.zip" includeemptydirs="true" basedir="${zipbase}" />
 	</target>
 	
 	<!-- ======= REBUILD ========== -->
