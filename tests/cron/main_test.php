@@ -163,11 +163,11 @@ class main_test extends \phpbb_database_test_case
 			->method('add_notifications');
 		if (is_array($expected_notification_data))
 		{
-			call_user_func_array(array($call, 'withConsecutive'), $expected_notification_data);
+			call_user_func_array(array($call, 'with'), $expected_notification_data);
 		}
-		else if ($expected_notification_data !== null)
+		else
 		{
-			$call->withConsecutive($expected_notification_data);
+			$call->with($expected_notification_data);
 		}
 
 		return new \gn36\versionchecknotifier\cron\versionchecknotifier($this->cache, $this->config, $db, $this->log, $manager, $helper);
