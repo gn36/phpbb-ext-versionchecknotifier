@@ -11,12 +11,9 @@
 set -e
 set -x
 
-NOTESTS=$2
 
-if [ "$NOTESTS" == "1" ]
-then
-	cd phpBB
-	composer remove sami/sami --dev --no-interaction
-	composer require phpbb/epv:dev-master --dev --no-interaction --ignore-platform-reqs
-	cd ../
-fi
+cd phpBB
+composer remove sami/sami --dev --no-interaction
+composer require phpbb/epv:dev-master --dev --no-interaction --ignore-platform-reqs
+cd ../
+
