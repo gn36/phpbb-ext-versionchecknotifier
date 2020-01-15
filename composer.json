@@ -3,9 +3,9 @@
 	"type" : "phpbb-extension",
 	"description" : "This extension checks for extension and phpBB updates periodically and notifies admins about updates.",
 	"homepage" : "https://github.com/gn36/phpbb-ext-versionchecknotifier/",
-	"version" : "3.0.0",
+	"version" : "3.0.1",
 	"time" : "2020-01-14",
-	"license" : "GPL-2.0",
+	"license" : "GPL-2.0-only",
 	"authors" : [{
 			"name" : "Martin Beckmann",
 			"email" : "gn#36@phpbb.de",
