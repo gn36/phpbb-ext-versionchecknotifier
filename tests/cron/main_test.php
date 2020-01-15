@@ -163,7 +163,13 @@ class main_test extends \phpbb_database_test_case
 			->method('add_notifications');
 		if (is_array($expected_notification_data))
 		{
-			call_user_func_array(array($call, 'withConsecutive'), $expected_notification_data);
+			$new = array();
+			foreach ($expected_notification_data as $key => $value)
+			{
+				$new[$key] = array($value);
+			}
+			
+			call_user_func_array(array($call, 'withConsecutive'), $new);
 		}
 		else
 		{
