@@ -28,7 +28,7 @@ abstract class base extends \phpbb_database_test_case
 		return array('gn36/versionchecknotifier');
 	}
 
-	protected function setUp()
+	protected function setUp() : void
 	{
 		parent::setUp();
 

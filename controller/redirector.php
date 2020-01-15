@@ -50,4 +50,3 @@ class redirector
 		redirect($url, false, true);
 	}
 }
-
