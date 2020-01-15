@@ -34,7 +34,7 @@ class main_test extends \phpbb_database_test_case
 	public function runProvider()
 	{
 		return array(
-			'none' 	=> array(array(), array(), $this->never(), array($this->equalTo(array()))),
+			'none' 	=> array(array(), array(), $this->never(), array(array($this->equalTo(array())))),
 			'phpbb' => array(
 				array(),
 				array('phpbb' => array('new' => '2', 'current' => '1')),
@@ -163,13 +163,7 @@ class main_test extends \phpbb_database_test_case
 			->method('add_notifications');
 		if (is_array($expected_notification_data))
 		{
-			$new = array();
-			foreach ($expected_notification_data as $key => $value)
-			{
-				$new[$key] = array($value);
-			}
-			
-			call_user_func_array(array($call, 'withConsecutive'), $new);
+			call_user_func_array(array($call, 'withConsecutive'), $expected_notification_data);
 		}
 		else
 		{
