@@ -51,7 +51,7 @@ class base_test extends base
 	public function test_get_id($type)
 	{
 		$notification_data = array(
-			'ext_name' 	=> 'asdf/jkla',
+			'name' 		=> 'asdf/jkla',
 			'version'	=> '1.0.0',
 		);
 
@@ -62,7 +62,7 @@ class base_test extends base
 
 		// Make sure the result is different for a different version, but parent stays the same
 		$notification_data = array(
-			'ext_name' 	=> 'asdf/jkla',
+			'name' 		=> 'asdf/jkla',
 			'version'	=> '1.0.1',
 		);
 		$this->assertEquals(116275, $ext->get_item_id($notification_data));
@@ -70,10 +70,26 @@ class base_test extends base
 
 		// Make sure everything changes for a different extension:
 		$notification_data = array(
-			'ext_name' 	=> 'asdf/jklb',
+			'name' 		=> 'asdf/jklb',
 			'version'	=> '1.0.0',
 		);
 		$this->assertEquals(9517528, $ext->get_item_id($notification_data));
 		$this->assertEquals(903454,  $ext->get_item_parent_id($notification_data));
+
+		// Make sure we can also extract the version info from a more complex structure.
+		// This should yield the same result as the second construct since the new version ist picked
+		$notification_data = array(
+			'name' 	=> 'asdf/jkla',
+			'new'	=> array(
+				'1.0' => array(
+					'current' => '1.0.1',
+				),
+			),
+			'current' => array(
+				'version' => '1.0.0',
+			),
+		);
+		$this->assertEquals(116275, $ext->get_item_id($notification_data));
+		$this->assertEquals(678298,  $ext->get_item_parent_id($notification_data));
 	}
 }

@@ -51,8 +51,11 @@ class base extends \phpbb\notification\type\base
 
 	public static function get_item_id($notification_data)
 	{
+		//TODO: This is rather expensive calculation wise just to get the version in. Maybe rework cron to provide better data?
 		// String -> unique numeric id is never really pleasant
-		$id = substr(md5($notification_data['ext_name'] . $notification_data['version']), 0, 16);
+		$notification_data = base::extract_version_info($notification_data);
+		$version = $notification_data['version'];
+		$id = substr(md5($notification_data['name'] . $version), 0, 16);
 		return intval(bcmod(self::bchex2dec($id), 10000000-1));
 
 	}
@@ -60,7 +63,7 @@ class base extends \phpbb\notification\type\base
 	public static function get_item_parent_id($notification_data)
 	{
 		// Parent of an extension version is the extension itself:
-		$id = substr(md5($notification_data['ext_name']), 0, 16);
+		$id = substr(md5($notification_data['name']), 0, 16);
 		return intval(bcmod(self::bchex2dec($id), 10000000-1));
 	}
 
@@ -187,8 +190,16 @@ class base extends \phpbb\notification\type\base
 		);
 	}
 
-	protected function extract_version_info($notification_data)
+	protected static function extract_version_info($notification_data)
 	{
+		// Check Format first - we may get "new" / "current" instead of "version" / "old_version"
+		if (isset($notification_data['new']) && isset($notification_data['current']))
+		{
+			$notification_data['old_version'] = $notification_data['current'];
+			$notification_data['version'] = $notification_data['new'];
+			unset($notification_data['new']);
+			unset($notification_data['current']);
+		}
 		// Lets start with "old version", that is a bit easier:
 		if (isset($notification_data['old_version']) && is_array($notification_data['old_version']))
 		{
