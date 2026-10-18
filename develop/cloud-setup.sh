@@ -1,6 +1,7 @@
 #!/bin/bash
 # Setup-Script für eine Claude-Cloud-Umgebung zum Testen von phpBB-3.3-Erweiterungen.
 # Installiert (möglichst versionsunabhängig): MariaDB, PHP-Erweiterungen, phpBB 3.3.x inkl. PHPUnit 9.
+# Spiegelt die Schritte von phpbb-extensions/test-framework@3.3.x (Sniffer, EPV, Tests).
 # Wird bei Umgebungen mit Setup-Script einmal ausgeführt und im Ergebnis zwischengespeichert.
 set -euo pipefail
 
@@ -10,7 +11,7 @@ PHPBB_DIR="${PHPBB_DIR:-/opt/phpbb-core}"
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq
 # php-cli ist im Basis-Image meist vorhanden; die Pakete ohne Versionsnummer nehmen die Standard-PHP-Version der Distribution.
-apt-get install -y -qq git unzip rsync mariadb-server \
+apt-get install -y -qq git unzip rsync mariadb-server imagemagick parallel \
   php-cli php-mbstring php-xml php-zip php-gd php-curl php-intl php-mysql php-sqlite3 php-pgsql
 
 # Datenbank für die phpBB-Tests (MariaDB); SQLite geht auch ohne Server.
@@ -30,3 +31,5 @@ composer install --no-interaction --no-progress
 composer remove phpunit/dbunit --dev --update-with-dependencies --no-interaction
 composer require symfony/yaml:^4.4 misantron/dbunit:5.2.1 phpunit/phpunit:^9.3 doctrine/instantiator:^1.4 \
   --dev --update-with-all-dependencies --ignore-platform-reqs --no-interaction
+# Extension Pre Validator (wie im CI des test-framework, Branch 3.3.x)
+composer require phpbb/epv:dev-master --dev --no-interaction --ignore-platform-reqs --with-all-dependencies
