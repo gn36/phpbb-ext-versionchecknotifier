@@ -82,10 +82,15 @@ abstract class base extends \phpbb_database_test_case
 		foreach ($this->get_notification_types() as $type)
 		{
 			$type_parts = explode('.', $type);
-			$class = $this->build_type('\\gn36\\versionchecknotifier\\notification\\' . array_pop($type_parts));
+			$type_parts_last = array_pop($type_parts);
+			$class = $this->build_type('\\gn36\\versionchecknotifier\\notification\\' . $type_parts_last);
 
 			$types[$type] = $class;
-			$this->container->set($type, $class);
+			// Like "shared: false" in services.yml: every request for the type yields a new instance
+			$class_name = '\\gn36\\versionchecknotifier\\notification\\' . $type_parts_last;
+			$this->container->set($type, array(function () use ($class_name) {
+				return $this->build_type($class_name);
+			}, array()));
 		}
 
 		$this->notifications->set_var('notification_types', $types);

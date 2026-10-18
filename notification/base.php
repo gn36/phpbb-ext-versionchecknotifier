@@ -324,6 +324,6 @@ class base extends \phpbb\notification\type\base
 			$this->set_data('announcement_url', $notification_data['announcement_url']);
 		}
 
-		return parent::create_insert_array($notification_data, $pre_create_data);
+		parent::create_insert_array($notification_data, $pre_create_data);
 	}
 }
