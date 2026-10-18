@@ -38,7 +38,7 @@ class ext extends \phpbb\extension\base
 	 */
 	protected function split_version_info($string)
 	{
-		$pattern = '#(>=|>|gt(?:;=?)?|ge|==?|eq|!=|<>|ne|<=|<|le|lt(?:;=?)?(?:gt;)?)([0-9._*-PLAHBETRCDV]+?)(?:$|,)#is';
+		$pattern = '#(>=|>|gt(?:;=?)?|ge|==?|eq|!=|<>|ne|<=|<|le|lt(?:;=?)?(?:gt;)?)([0-9._*\-PLAHBETRCDV]+?)(?:$|,)#is';
 
 		$matches = null;
 		preg_match_all($pattern, $string, $matches);
@@ -76,9 +76,9 @@ class ext extends \phpbb\extension\base
 			$require = array();
 		}
 
-		if (isset($meta['extra']['soft_require']))
+		if (isset($meta['extra']['soft-require']))
 		{
-			$require = array_merge($require, $meta['extra']['soft_require']);
+			$require = array_merge($require, $meta['extra']['soft-require']);
 		}
 
 		$require = array_merge($require, $this->extra_dependencies());

@@ -19,10 +19,26 @@ class base extends \phpbb\notification\type\base
 	// The permission to check to find users / send message
 	protected $permission = 'a_this_is_a_nonexistent_permission';
 
+	/** @var \phpbb\config\config */
+	protected $config;
+
+	/** @var \phpbb\user_loader */
+	protected $user_loader;
+
 	public static $notification_option = array(
 		'lang' 	=> 'VERSIONCHECKNOTIFY_NOTIFY_OPTION',
 		'group'	=> 'NOTIFICATION_GROUP_MISCELLANEOUS',
 	);
+
+	public function set_config(\phpbb\config\config $config)
+	{
+		$this->config = $config;
+	}
+
+	public function set_user_loader(\phpbb\user_loader $user_loader)
+	{
+		$this->user_loader = $user_loader;
+	}
 
 	public function get_type()
 	{
@@ -35,36 +51,36 @@ class base extends \phpbb\notification\type\base
 	}
 
 	/**
-	 * calculate decimal from hex
-	 * @param string $val hex value
+	 * Calculate a hex string modulo a number without needing bcmath or 64 bit integers
+	 * @param string $hex hex value
+	 * @param int $modulus
+	 * @return int
 	 */
-	protected static function bchex2dec($val)
+	protected static function hexmod($hex, $modulus)
 	{
-		if (strlen($val) == 1)
+		$result = 0;
+		foreach (str_split($hex) as $digit)
 		{
-			return hexdec($val);
+			$result = ($result * 16 + hexdec($digit)) % $modulus;
 		}
-		$head = substr($val, 0, -1);
-		$tail = substr($val, -1);
-		return bcadd(bcmul(16, self::bchex2dec($head)), hexdec($tail));
+		return $result;
 	}
 
 	public static function get_item_id($notification_data)
 	{
 		//TODO: This is rather expensive calculation wise just to get the version in. Maybe rework cron to provide better data?
 		// String -> unique numeric id is never really pleasant
-		$notification_data = base::extract_version_info($notification_data);
+		$notification_data = static::extract_version_info($notification_data);
 		$version = $notification_data['version'];
 		$id = substr(md5($notification_data['name'] . $version), 0, 16);
-		return intval(bcmod(self::bchex2dec($id), 10000000-1));
-
+		return self::hexmod($id, 10000000 - 1);
 	}
 
 	public static function get_item_parent_id($notification_data)
 	{
 		// Parent of an extension version is the extension itself:
 		$id = substr(md5($notification_data['name']), 0, 16);
-		return intval(bcmod(self::bchex2dec($id), 10000000-1));
+		return self::hexmod($id, 10000000 - 1);
 	}
 
 	public function find_users_for_notification($notification_data, $options = array())
@@ -103,9 +119,9 @@ class base extends \phpbb\notification\type\base
 
 		if ($this->get_data('security'))
 		{
-			return "<img class='avatar' alt='{$this->user->lang('UPDATE_AVAILABLE')}' src='${board_url}ext/gn36/versionchecknotifier/fixtures/{$this->notify_icon}_sec.png' />";
+			return "<img class='avatar' alt='{$this->language->lang('UPDATE_AVAILABLE')}' src='{$board_url}ext/gn36/versionchecknotifier/fixtures/{$this->notify_icon}_sec.png' />";
 		}
-		return "<img class='avatar' alt='{$this->user->lang('UPDATE_AVAILABLE')}' src='${board_url}ext/gn36/versionchecknotifier/fixtures/{$this->notify_icon}.png' />";
+		return "<img class='avatar' alt='{$this->language->lang('UPDATE_AVAILABLE')}' src='{$board_url}ext/gn36/versionchecknotifier/fixtures/{$this->notify_icon}.png' />";
 	}
 
 	public function get_title()
@@ -114,7 +130,7 @@ class base extends \phpbb\notification\type\base
 		$version  = $this->get_data('version');
 		$security = $this->get_data('security');
 
-		return $this->user->lang($security ? $this->language_key_sec : $this->language_key, $ext_name, $version);
+		return $this->language->lang($security ? $this->language_key_sec : $this->language_key, $ext_name, $version);
 	}
 
 	public function get_reason()
@@ -126,10 +142,10 @@ class base extends \phpbb\notification\type\base
 
 		if ($dl)
 		{
-			return $this->user->lang('REASON_UPDATE_DL', $ext_name, $version, $old_version, $dl);
+			return $this->language->lang('REASON_UPDATE_DL', $ext_name, $version, $old_version, $dl);
 		}
 
-		return $this->user->lang('REASON_UPDATE', $ext_name, $version, $old_version);
+		return $this->language->lang('REASON_UPDATE', $ext_name, $version, $old_version);
 	}
 
 	function users_to_query()
@@ -173,19 +189,19 @@ class base extends \phpbb\notification\type\base
 
 	public function get_email_template_variables()
 	{
-		$this->user->add_lang_ext('gn36/versionchecknotifier', 'mailing');
+		$this->language->add_lang('mailing', 'gn36/versionchecknotifier');
 		// TODO: EMAIL_SIG
 		return array(
 			'EXTENSION' 	=> $this->get_data('name'),
 			'NAME' 			=> $this->get_data('name'),
-			'VERSION'		=> $this->get_data('version') ? $this->get_data('version') : $this->user->lang('NOT_AVAILABLE'),
-			'OLD_VERSION' 	=> $this->get_data('old_version') ? $this->get_data('old_version') : $this->user->lang('NOT_AVAILABLE'),
+			'VERSION'		=> $this->get_data('version') ? $this->get_data('version') : $this->language->lang('NOT_AVAILABLE'),
+			'OLD_VERSION' 	=> $this->get_data('old_version') ? $this->get_data('old_version') : $this->language->lang('NOT_AVAILABLE'),
 			'SITENAME' 		=> $this->config['sitename'],
-			'SECURITY'		=> $this->get_data('security') ? $this->user->lang('IS_SECURITY_UPDATE') : '',
+			'SECURITY'		=> $this->get_data('security') ? $this->language->lang('IS_SECURITY_UPDATE') : '',
 			'U_INDEX' 		=> generate_board_url() . "/index.{$this->php_ext}",
-			'DOWNLOAD'		=> $this->get_data('download_url') ? str_replace('&amp;', '&', $this->get_data('download_url')) : $this->user->lang('NOT_AVAILABLE'),
-			'ANNOUNCEMENT' 	=> $this->get_data('announcement_url') ? str_replace('&amp;', '&', $this->get_data('announcement_url')) : $this->user->lang('NOT_AVAILABLE'),
-			'ADD_INFO'		=> $this->get_data('text') ? $this->user->lang('ADDITIONAL_INFO', $this->get_data('text')) : '',
+			'DOWNLOAD'		=> $this->get_data('download_url') ? str_replace('&amp;', '&', $this->get_data('download_url')) : $this->language->lang('NOT_AVAILABLE'),
+			'ANNOUNCEMENT' 	=> $this->get_data('announcement_url') ? str_replace('&amp;', '&', $this->get_data('announcement_url')) : $this->language->lang('NOT_AVAILABLE'),
+			'ADD_INFO'		=> $this->get_data('text') ? $this->language->lang('ADDITIONAL_INFO', $this->get_data('text')) : '',
 			//TODO: How to actually personalize this?
 		);
 	}
@@ -309,58 +325,5 @@ class base extends \phpbb\notification\type\base
 		}
 
 		return parent::create_insert_array($notification_data, $pre_create_data);
-	}
-
-	/**
-	 * Update a notification
-	 *
-	 * @param array $notification_data Data specific for this type that will be updated
-	 */
-	public function update_notifications($notification_data)
-	{
-		$notification_data = $this->extract_version_info($notification_data);
-
-		$old_notifications = array();
-		$sql = 'SELECT n.user_id
-			FROM ' . $this->notifications_table . ' n, ' . $this->notification_types_table . ' nt
-			WHERE n.notification_type_id = ' . (int) $this->notification_type_id . '
-				AND n.item_id = ' . static::get_item_id($notification_data) . '
-				AND nt.notification_type_id = n.notification_type_id
-				AND nt.notification_type_enabled = 1';
-		$result = $this->db->sql_query($sql);
-		while ($row = $this->db->sql_fetchrow($result))
-		{
-			$old_notifications[] = $row['user_id'];
-		}
-		$this->db->sql_freeresult($result);
-
-		// Find the new users to notify
-		$notifications = $this->find_users_for_notification($notification_data);
-
-		// Find the notifications we must delete
-		$remove_notifications = array_diff($old_notifications, array_keys($notifications));
-
-		// Find the notifications we must add
-		$add_notifications = array();
-		foreach (array_diff(array_keys($notifications), $old_notifications) as $user_id)
-		{
-			$add_notifications[$user_id] = $notifications[$user_id];
-		}
-
-		// Add the necessary notifications
-		$this->notification_manager->add_notifications_for_users($this->get_type(), $notification_data, $add_notifications);
-
-		// Remove the necessary notifications
-		if (!empty($remove_notifications))
-		{
-			$sql = 'DELETE FROM ' . $this->notifications_table . '
-				WHERE notification_type_id = ' . (int) $this->notification_type_id . '
-					AND item_id = ' . static::get_item_id($notification_data) . '
-					AND ' . $this->db->sql_in_set('user_id', $remove_notifications);
-			$this->db->sql_query($sql);
-		}
-
-		// return true to continue with the update code in the notifications service (this will update the rest of the notifications)
-		return true;
 	}
 }

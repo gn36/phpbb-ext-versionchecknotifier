@@ -13,7 +13,7 @@ require_once dirname(__FILE__) . '/../../../../../../tests/notification/manager_
 
 abstract class base extends \phpbb_database_test_case
 {
-	protected $notifications, $db, $container, $user, $config, $auth, $cache;
+	protected $notifications, $language, $db, $container, $user, $config, $auth, $cache;
 
 	protected function get_notification_types()
 	{
@@ -28,7 +28,7 @@ abstract class base extends \phpbb_database_test_case
 		return array('gn36/versionchecknotifier');
 	}
 
-	protected function setUp()
+	protected function setUp(): void
 	{
 		parent::setUp();
 
@@ -38,20 +38,25 @@ abstract class base extends \phpbb_database_test_case
 
 		$db = $this->db = $this->new_dbal();
 		$config = $this->config = new \phpbb\config\config(array(
-			//TODO
+			'allow_board_notifications' => true,
 		));
-		$user = $this->user = new \phpbb\user('\phpbb\datetime');
+		$lang_loader = new \phpbb\language\language_file_loader($phpbb_root_path, $phpEx);
+		$this->language = new \phpbb\language\language($lang_loader);
+		$user = $this->user = new \phpbb\user($this->language, '\phpbb\datetime');
+		$user->data['user_id'] = 0;
+		$user->data['user_type'] = USER_NORMAL;
 		$this->user_loader = new \phpbb\user_loader($this->db, $phpbb_root_path, $phpEx, 'phpbb_users');
 		$auth = $this->auth = new \phpbb_mock_notifications_auth();
+		$this->phpbb_dispatcher = new \phpbb_mock_event_dispatcher();
+		$cache_driver = new \phpbb\cache\driver\dummy();
 		$cache = $this->cache = new \phpbb\cache\service(
-			new \phpbb\cache\driver\null(),
+			$cache_driver,
 			$this->config,
 			$this->db,
+			$this->phpbb_dispatcher,
 			$phpbb_root_path,
 			$phpEx
 		);
-
-		$this->phpbb_dispatcher = new \phpbb_mock_event_dispatcher();
 
 		$phpbb_container = $this->container = new \phpbb_mock_container_builder();
 
@@ -60,15 +65,12 @@ abstract class base extends \phpbb_database_test_case
 			array(),
 			$this->container,
 			$this->user_loader,
-			$this->config,
 			$this->phpbb_dispatcher,
 			$this->db,
 			$this->cache,
+			$this->language,
 			$this->user,
-			$phpbb_root_path,
-			$phpEx,
 			'phpbb_notification_types',
-			'phpbb_notifications',
 			'phpbb_user_notifications'
 		);
 
@@ -80,7 +82,7 @@ abstract class base extends \phpbb_database_test_case
 		foreach ($this->get_notification_types() as $type)
 		{
 			$type_parts = explode('.', $type);
-			$class = $this->build_type('\gn36\versionchecknotifier\notification\\' . array_pop($type_parts));
+			$class = $this->build_type('\\gn36\\versionchecknotifier\\notification\\' . array_pop($type_parts));
 
 			$types[$type] = $class;
 			$this->container->set($type, $class);
@@ -97,6 +99,11 @@ abstract class base extends \phpbb_database_test_case
 	{
 		global $phpbb_root_path, $phpEx;
 
-		return new $type($this->user_loader, $this->db, $this->cache->get_driver(), $this->user, $this->auth, $this->config, $phpbb_root_path, $phpEx, 'phpbb_notification_types', 'phpbb_notifications', 'phpbb_user_notifications');
+		/** @var \gn36\versionchecknotifier\notification\base $instance */
+		$instance = new $type($this->db, $this->language, $this->user, $this->auth, $phpbb_root_path, $phpEx, 'phpbb_user_notifications');
+		$instance->set_config($this->config);
+		$instance->set_user_loader($this->user_loader);
+
+		return $instance;
 	}
 }

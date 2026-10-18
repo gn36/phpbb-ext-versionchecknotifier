@@ -1,0 +1,16 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - master
+      - 'modernize-*'
+  pull_request:
+
+jobs:
+  call-tests:
+    name: Extension tests
+    # Der Branch 3.3.x des Frameworks zielt auf phpBB 3.3.x (master zielt auf phpBB 4)
+    uses: phpbb-extensions/test-framework/.github/workflows/tests.yml@3.3.x
+    with:
+      EXTNAME: gn36/versionchecknotifier

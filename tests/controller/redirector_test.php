@@ -62,7 +62,7 @@ class redirector_test extends \phpbb_test_case
 
 	private function get_instance($get_url_count = 0, $registered = true)
 	{
-		$user = $this->getMock('\phpbb\user', array(), array('\phpbb\datetime'));
+		$user = $this->getMockBuilder('\phpbb\user')->disableOriginalConstructor()->getMock();
 		$user->ip = '';
 		$user->data = array(
 			'user_id'		=> 2,
@@ -91,10 +91,13 @@ class redirector_test extends \phpbb_test_case
 
 		$manager->expects($this->any())
 			->method('load_notifications')
-			->will($this->returnValueMap(array(
-				array(array('notification_id' => 12345), array('notifications' => array(12345 => $notification))),
-				array($this->anything(), array('notifications' => array()))
-			)));
+			->will($this->returnCallback(function ($method, array $options = array()) use ($notification) {
+				if (isset($options['notification_id']) && $options['notification_id'] === 12345)
+				{
+					return array('notifications' => array(12345 => $notification));
+				}
+				return array('notifications' => array());
+			}));
 		return new \gn36\versionchecknotifier\controller\redirector($user, $manager);
 	}
 }
