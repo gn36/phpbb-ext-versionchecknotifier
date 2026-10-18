@@ -92,8 +92,8 @@ class redirector_test extends \phpbb_test_case
 		$manager->expects($this->any())
 			->method('load_notifications')
 			->will($this->returnValueMap(array(
-				array(array('notification_id' => 12345), array('notifications' => array(12345 => $notification))),
-				array($this->anything(), array('notifications' => array()))
+				array('notification.method.board', array('notification_id' => 12345), array('notifications' => array(12345 => $notification))),
+				array($this->anything(), $this->anything(), array('notifications' => array()))
 			)));
 		return new \gn36\versionchecknotifier\controller\redirector($user, $manager);
 	}

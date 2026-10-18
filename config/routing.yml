@@ -1,4 +1,4 @@
 # There is only one route
 gn36_versionchecknotifier_controller_redirector:
-    pattern: /versionchecknotifier/redirect/{notify_id}
+    path: /versionchecknotifier/redirect/{notify_id}
     defaults: { _controller: "gn36.versionchecknotifier.controller.redirector:handle", notify_id: 0 }

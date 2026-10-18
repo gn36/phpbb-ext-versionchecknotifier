@@ -45,11 +45,11 @@ class global_events implements \Symfony\Component\EventDispatcher\EventSubscribe
 
 		$notifications_data = array(
 			array(
-				'item_type'	=> 'gn36.versionchecknotify.notification.type.ext_update',
+				'item_type'	=> 'gn36.versionchecknotifier.notification.type.ext_update',
 				'method'	=> 'notification.method.email',
 			),
 			array(
-				'item_type'	=> 'gn36.versionchecknotify.notification.type.phpbb_update',
+				'item_type'	=> 'gn36.versionchecknotifier.notification.type.phpbb_update',
 				'method'	=> 'notification.method.email',
 			),
 		);

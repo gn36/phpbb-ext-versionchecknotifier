@@ -8,7 +8,7 @@
 *
 */
 
-namespace gn36\hookup\tests\functional;
+namespace gn36\versionchecknotifier\tests\functional;
 
 /**
 * @group functional
