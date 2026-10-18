@@ -34,7 +34,7 @@ class main_test extends \phpbb_database_test_case
 	public function runProvider()
 	{
 		return array(
-			'none' 	=> array(array(), array(), $this->never(), array($this->equalTo(array()))),
+			'none' 	=> array(array(), array(), $this->never(), array(array($this->equalTo(array())))),
 			'phpbb' => array(
 				array(),
 				array('phpbb' => array('new' => '2', 'current' => '1')),
@@ -167,7 +167,7 @@ class main_test extends \phpbb_database_test_case
 		}
 		else
 		{
-			$call->withConsecutive($expected_notification_data);
+			$call->withConsecutive(array($expected_notification_data, $this->anything()));
 		}
 
 		return new \gn36\versionchecknotifier\cron\versionchecknotifier($this->cache, $this->config, $db, $this->log, $manager, $helper);

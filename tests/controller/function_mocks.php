@@ -36,9 +36,9 @@ function redirect($url, $return = false, $insecure = false, \phpbb_test_case $te
 	// Check datatypes
 	if ($test_obj_save !== null)
 	{
-		$test_obj_save->assertInternalType('string', $url);
-		$test_obj_save->assertInternalType('bool', $return);
-		$test_obj_save->assertInternalType('bool', $insecure);
+		$test_obj_save->assertIsString($url);
+		$test_obj_save->assertIsBool($return);
+		$test_obj_save->assertIsBool($insecure);
 	}
 	else
 	{
