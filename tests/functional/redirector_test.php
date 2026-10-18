@@ -31,10 +31,10 @@ class redirector_test extends \phpbb_functional_test_case
 		$this->add_lang_ext('gn36/versionchecknotifier', 'global');
 
 		$crawler = self::request('GET', 'app.php/versionchecknotifier/redirect/0?sid=' . $this->sid);
-		$this->assertContains($this->lang('INVALID_NOTIFICATION_ID_REDIRECT'), implode(' ', $crawler->filter('p')->each($each_closure)));
+		$this->assertStringContainsString($this->lang('INVALID_NOTIFICATION_ID_REDIRECT'), implode(' ', $crawler->filter('p')->each($each_closure)));
 
 		$crawler = self::request('GET', 'app.php/versionchecknotifier/redirect/1?sid=' . $this->sid);
-		$this->assertContains($this->lang('INVALID_NOTIFICATION_ID_REDIRECT'), implode(' ', $crawler->filter('p')->each($each_closure)));
+		$this->assertStringContainsString($this->lang('INVALID_NOTIFICATION_ID_REDIRECT'), implode(' ', $crawler->filter('p')->each($each_closure)));
 	}
 
 	public function test_call_redirect_working()
@@ -100,8 +100,8 @@ class redirector_test extends \phpbb_functional_test_case
 
 		// Now check redirect
 		$crawler = self::request('GET', 'app.php/versionchecknotifier/redirect/' . $last_id . '?sid=' . $this->sid);
-		$this->assertNotContains($this->lang('INVALID_NOTIFICATION_ID_REDIRECT'), implode(' ', $crawler->filter('p')->each($each_closure)));
-		$this->assertContains('example post', implode(' ', $crawler->filter('.content')->each($each_closure)));
+		$this->assertStringNotContainsString($this->lang('INVALID_NOTIFICATION_ID_REDIRECT'), implode(' ', $crawler->filter('p')->each($each_closure)));
+		$this->assertStringContainsString('example post', implode(' ', $crawler->filter('.content')->each($each_closure)));
 	}
 
 	public function test_redirect_login()
@@ -114,7 +114,7 @@ class redirector_test extends \phpbb_functional_test_case
 		$this->add_lang_ext('gn36/versionchecknotifier', 'global');
 
 		$crawler = self::request('GET', 'app.php/versionchecknotifier/redirect/1?sid=' . $this->sid);
-		$this->assertNotContains($this->lang('INVALID_NOTIFICATION_ID_REDIRECT'), implode(' ', $crawler->filter('p')->each($each_closure)));
-		$this->assertContains($this->lang('LOGIN'), implode(' ', $crawler->filter('.content')->each($each_closure)));
+		$this->assertStringNotContainsString($this->lang('INVALID_NOTIFICATION_ID_REDIRECT'), implode(' ', $crawler->filter('p')->each($each_closure)));
+		$this->assertStringContainsString($this->lang('LOGIN'), implode(' ', $crawler->filter('.content')->each($each_closure)));
 	}
 }
